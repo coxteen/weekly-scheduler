@@ -1,0 +1,68 @@
+import type { ScheduleTheme } from '../types/schedule';
+
+export const PRESET_THEMES: ScheduleTheme[] = [
+  {
+    id: 'bright-blue',
+    name: 'Bright Blue',
+    backgroundColor: '#2870ED',
+    cardBackgroundColor: 'rgba(0, 0, 0, 0.12)',
+    textColor: '#FFFFFF',
+    accentColor: '#FFFFFF',
+  },
+  {
+    id: 'teal',
+    name: 'Teal',
+    backgroundColor: '#02A3A4',
+    cardBackgroundColor: 'rgba(0, 0, 0, 0.12)',
+    textColor: '#FFFFFF',
+    accentColor: '#FFFFFF',
+  },
+  {
+    id: 'forest',
+    name: 'Forest',
+    backgroundColor: '#028661',
+    cardBackgroundColor: 'rgba(0, 0, 0, 0.12)',
+    textColor: '#FFFFFF',
+    accentColor: '#FFFFFF',
+  },
+  {
+    id: 'apple',
+    name: 'Apple',
+    backgroundColor: '#0CB43F',
+    cardBackgroundColor: 'rgba(0, 0, 0, 0.12)',
+    textColor: '#FFFFFF',
+    accentColor: '#FFFFFF',
+  },
+  {
+    id: 'orange',
+    name: 'Orange',
+    backgroundColor: '#FF6130',
+    cardBackgroundColor: 'rgba(0, 0, 0, 0.12)',
+    textColor: '#FFFFFF',
+    accentColor: '#FFFFFF',
+  },
+  {
+    id: 'pink',
+    name: 'Pink',
+    backgroundColor: '#EB4C79',
+    cardBackgroundColor: 'rgba(0, 0, 0, 0.12)',
+    textColor: '#FFFFFF',
+    accentColor: '#FFFFFF',
+  },
+  {
+    id: 'aubergine',
+    name: 'Aubergine',
+    backgroundColor: '#721C7A',
+    cardBackgroundColor: 'rgba(0, 0, 0, 0.12)',
+    textColor: '#FFFFFF',
+    accentColor: '#FFFFFF',
+  },
+  {
+    id: 'stone',
+    name: 'Stone',
+    backgroundColor: '#245375',
+    cardBackgroundColor: 'rgba(0, 0, 0, 0.12)',
+    textColor: '#FFFFFF',
+    accentColor: '#FFFFFF',
+  },
+];
