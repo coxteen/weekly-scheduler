@@ -59,7 +59,6 @@ export const DaySection = ({
               key={event.id}
               event={event}
               textColor={textColor}
-              // AM ȘTERS accentColor și delayIndex de aici!
             />
           ))
         )}

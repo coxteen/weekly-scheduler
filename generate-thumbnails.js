@@ -5,7 +5,6 @@ import sharp from 'sharp';
 const inputDir = path.join(process.cwd(), 'public', 'apple-emojis');
 const outputDir = path.join(process.cwd(), 'public', 'apple-emojis-sm');
 
-// Creăm folderul dacă nu există
 if (!fs.existsSync(outputDir)) {
   fs.mkdirSync(outputDir, { recursive: true });
 }
@@ -19,10 +18,9 @@ async function processImages() {
     const inputPath = path.join(inputDir, file);
     const outputPath = path.join(outputDir, file);
 
-    // Sarim peste dacă miniatura există deja
     if (!fs.existsSync(outputPath)) {
       await sharp(inputPath)
-        .resize(64, 64) // Downscale de ~4 ori (presupunând că originalul e ~256x256)
+        .resize(64, 64)
         .png({ quality: 80, effort: 6 })
         .toFile(outputPath);
     }
