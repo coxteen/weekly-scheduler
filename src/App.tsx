@@ -106,7 +106,7 @@ export default function App() {
                   <button
                     type="button"
                     disabled={safePageIndex === pages.length - 1}
-                    onClick={() => setActivePageIndex((prev) => Math.min(pages.length - 1, safePageIndex + 1))}
+                    onClick={() => setActivePageIndex((prev) => Math.min(pages.length - 1, prev + 1))}
                     className={`flex items-center justify-center py-2 ${UI_THEME.radii.control} bg-[#171724] border border-[#262638] text-neutral-400 disabled:opacity-30 hover:bg-[#202030] transition-colors cursor-pointer`}
                   >
                     <ChevronRight className="w-4 h-4" />
