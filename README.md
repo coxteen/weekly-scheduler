@@ -2,7 +2,7 @@
 
 # Weekly Scheduler
 
-**Weekly Scheduler helps teams, educators, and event organizers turn a busy week into a polished, export-ready schedule without manual spreadsheet cleanup.**
+**Weekly Scheduler helps teams, educators, and event organizers turn a busy week into a polished, export-ready schedule without manual spreadsheet cleanup**
 
 [![Platform](https://img.shields.io/badge/Platform-Web-4F46E5?style=flat-square&logo=vercel&logoColor=white)](https://vite.dev/)
 [![Framework](https://img.shields.io/badge/React-19-61DAFB?style=flat-square&logo=react&logoColor=white)](https://react.dev/)
@@ -130,4 +130,4 @@ In this project, the main customization points are the weekly date range, enable
 ## 📄 License & Author
 
 - **Author:** [Costin Ghiujan](https://github.com/coxteen)
-- **License:** Released under the MIT License.
+- **License:** Released under the [MIT License](LICENSE).
