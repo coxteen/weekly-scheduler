@@ -33,7 +33,7 @@ export const EventCard = ({
 
       <div
         className={`flex flex-col min-w-0 flex-1 ${event.time ? 'justify-between' : 'justify-center'}`}
-        style={{ lineHeight: cfg.titleLineHeight }}
+        style={{ lineHeight: cfg.titleLineHeight, gap: POSTER_CONFIG.eventCard.gapBetweenTimeAndTitle }}
       >
         <div className="flex flex-wrap items-baseline gap-x-1 gap-y-0.5">
           <span

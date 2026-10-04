@@ -28,57 +28,51 @@ export const ScheduleBoard = forwardRef<HTMLDivElement, ScheduleBoardProps>(
             aspectRatio: layout.aspectRatio,
             minHeight: layout.minHeight,
             borderRadius: layout.borderRadius,
+            paddingLeft: layout.padding.sides,
+            paddingRight: layout.padding.sides,
+            paddingBottom: layout.padding.bottom,
           }}
         >
           <div 
-            className="relative w-full h-full flex flex-col"
-            style={{
-              paddingLeft: layout.padding.sides,
-              paddingRight: layout.padding.sides,
-              paddingBottom: layout.padding.bottom,
-            }}
+            className="flex flex-col items-center justify-center w-full" 
+            style={{ flexGrow: 2 }}
           >
-            <div 
-              className="flex flex-col items-center justify-center w-full" 
-              style={{ flexGrow: 2 }}
+            <div
+              className="font-black text-white"
+              style={{
+                fontSize: header.titleSmallFontSize,
+                letterSpacing: header.titleSmallLetterSpacing,
+                opacity: header.titleSmallOpacity,
+              }}
             >
-              <div
-                className="font-black text-white"
-                style={{
-                  fontSize: header.titleSmallFontSize,
-                  letterSpacing: header.titleSmallLetterSpacing,
-                  opacity: header.titleSmallOpacity,
-                }}
-              >
-                PROGRAM
-              </div>
-              <div
-                className="font-bold text-white uppercase leading-none mt-1"
-                style={{
-                  fontSize: header.periodFontSize,
-                }}
-              >
-                {periodText}
-              </div>
+              PROGRAM
             </div>
-
-            <div 
-              className="w-full flex-none flex flex-col"
-              style={{ gap: layout.daysGap }}
+            <div
+              className="font-bold text-white uppercase leading-none mt-1"
+              style={{
+                fontSize: header.periodFontSize,
+              }}
             >
-              {page.days.map((day) => (
-                <DaySection
-                  key={day.id}
-                  day={day}
-                  cardBackgroundColor={POSTER_CONFIG.daySection.cardBackgroundColor}
-                  textColor={config.theme.textColor}
-                  accentColor={config.theme.accentColor}
-                />
-              ))}
+              {periodText}
             </div>
-
-            <div className="w-full" style={{ flexGrow: 1 }} aria-hidden="true" />
           </div>
+
+          <div 
+            className="w-full flex-none flex flex-col"
+            style={{ gap: layout.daysGap }}
+          >
+            {page.days.map((day) => (
+              <DaySection
+                key={day.id}
+                day={day}
+                cardBackgroundColor={POSTER_CONFIG.daySection.cardBackgroundColor}
+                textColor={config.theme.textColor}
+                accentColor={config.theme.accentColor}
+              />
+            ))}
+          </div>
+
+          <div className="w-full" style={{ flexGrow: 1 }} aria-hidden="true" />
         </div>
       </div>
     );

@@ -8,9 +8,21 @@ const downloadImage = (dataUrl: string, filename: string) => {
   link.click();
 };
 
+const EXPORT_OPTIONS = {
+  pixelRatio: 2,
+  style: {
+    borderRadius: '0px', 
+  }
+};
+
 export async function exportElementsToPng(elements: HTMLElement[]): Promise<void> {
   for (let i = 0; i < elements.length; i++) {
-    const dataUrl = await toPng(elements[i], { pixelRatio: 2, cacheBust: true });
+    const bgColor = window.getComputedStyle(elements[i]).backgroundColor;
+    
+    const dataUrl = await toPng(elements[i], {
+      ...EXPORT_OPTIONS,
+      backgroundColor: bgColor,
+    });
     const filename = elements.length > 1 ? `story-program-${i + 1}.png` : 'story-program.png';
     downloadImage(dataUrl, filename);
   }
@@ -18,11 +30,12 @@ export async function exportElementsToPng(elements: HTMLElement[]): Promise<void
 
 export async function exportElementsToJpg(elements: HTMLElement[]): Promise<void> {
   for (let i = 0; i < elements.length; i++) {
+    const bgColor = window.getComputedStyle(elements[i]).backgroundColor;
+
     const dataUrl = await toJpeg(elements[i], { 
-      pixelRatio: 2, 
+      ...EXPORT_OPTIONS, 
       quality: 0.95, 
-      backgroundColor: '#121218',
-      cacheBust: true 
+      backgroundColor: bgColor
     });
     const filename = elements.length > 1 ? `story-program-${i + 1}.jpg` : 'story-program.jpg';
     downloadImage(dataUrl, filename);
@@ -39,7 +52,12 @@ export async function exportElementsToPdf(elements: HTMLElement[]): Promise<void
   });
 
   for (let i = 0; i < elements.length; i++) {
-    const dataUrl = await toPng(elements[i], { pixelRatio: 2, cacheBust: true });
+    const bgColor = window.getComputedStyle(elements[i]).backgroundColor;
+    
+    const dataUrl = await toPng(elements[i], {
+      ...EXPORT_OPTIONS,
+      backgroundColor: bgColor,
+    });
 
     if (i > 0) {
       pdf.addPage([1080, 1920], 'portrait');
