@@ -48,7 +48,6 @@ export default function App() {
   const exportControls = (
     <ExportToolbar
       getBoardElements={getBoardElements}
-      pagesCount={pages.length}
     />
   );
 

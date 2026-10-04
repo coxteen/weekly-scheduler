@@ -7,7 +7,6 @@ type ExportFormat = 'png' | 'jpg' | 'pdf';
 
 interface ExportToolbarProps {
   getBoardElements: () => HTMLElement[];
-  pagesCount: number;
 }
 
 const FORMATS = [
@@ -18,7 +17,6 @@ const FORMATS = [
 
 export const ExportToolbar = ({
   getBoardElements,
-  pagesCount,
 }: ExportToolbarProps) => {
   const [selectedFormat, setSelectedFormat] = useState<ExportFormat>('png');
   const [isExporting, setIsExporting] = useState(false);
