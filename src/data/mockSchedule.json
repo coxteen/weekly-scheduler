@@ -27,13 +27,6 @@
           "emoji": "🗣️"
         },
         {
-          "id": "e-2",
-          "title": "Club de Lectură & Cafea",
-          "feature": "discuție cărți SF",
-          "time": "17:45 - 19:00",
-          "emoji": "📖"
-        },
-        {
           "id": "e-3",
           "title": "Board Games Night",
           "feature": "Catan & Carcassonne",
@@ -72,13 +65,6 @@
           "emoji": "🎸"
         },
         {
-          "id": "e-7",
-          "title": "Intro în Calisthenics",
-          "feature": "tehnici de bază & mobilitate",
-          "time": "19:45 - 20:45",
-          "emoji": "🤸"
-        },
-        {
           "id": "e-8",
           "title": "Seară de Ceai & Reflecție",
           "feature": "jurnal și mindful rest",
@@ -101,13 +87,6 @@
           "feature": "creare prototip 2D",
           "time": "16:00 - 17:30",
           "emoji": "🎮"
-        },
-        {
-          "id": "e-10",
-          "title": "Atelier de Scriere Creativă",
-          "feature": "povestiri scurte",
-          "time": "17:45 - 19:15",
-          "emoji": "✍️"
         },
         {
           "id": "e-11",
@@ -141,13 +120,6 @@
           "emoji": "🎙️"
         },
         {
-          "id": "e-14",
-          "title": "Lecții de Pian",
-          "feature": "armonii și acorduri",
-          "time": "18:15 - 19:30",
-          "emoji": "🎹"
-        },
-        {
           "id": "e-15",
           "title": "Educație Financiară",
           "feature": "buget personal simplu",
@@ -179,13 +151,6 @@
           "emoji": "♟️"
         },
         {
-          "id": "e-18",
-          "title": "Robotică & IoT",
-          "feature": "senzori și microcontrollere",
-          "time": "17:45 - 19:15",
-          "emoji": "🤖"
-        },
-        {
           "id": "e-19",
           "title": "Movie Night & Popcorn",
           "feature": "proiecție film clasic",
@@ -215,13 +180,6 @@
           "feature": "traseu parc 5km",
           "time": "10:00 - 11:30",
           "emoji": "🏃"
-        },
-        {
-          "id": "e-22",
-          "title": "Retro Gaming Party",
-          "feature": "clasice arcade & consolă",
-          "time": "15:00 - 17:00",
-          "emoji": "👾"
         },
         {
           "id": "e-23",
