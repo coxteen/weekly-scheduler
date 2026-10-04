@@ -20,7 +20,7 @@ export const ScheduleBoard = forwardRef<HTMLDivElement, ScheduleBoardProps>(
         <div
           ref={ref}
           data-page-number={page.pageNumber}
-          className="w-full shadow-2xl relative flex flex-col items-center overflow-hidden"
+          className="w-full shadow-2xl relative flex flex-col overflow-hidden"
           style={{
             backgroundColor: config.theme.backgroundColor,
             color: config.theme.textColor,
@@ -28,51 +28,57 @@ export const ScheduleBoard = forwardRef<HTMLDivElement, ScheduleBoardProps>(
             aspectRatio: layout.aspectRatio,
             minHeight: layout.minHeight,
             borderRadius: layout.borderRadius,
-            paddingLeft: layout.padding.sides,
-            paddingRight: layout.padding.sides,
-            paddingTop: layout.padding.top,
-            paddingBottom: layout.padding.bottom,
           }}
         >
-          <div className="flex-1 w-full flex items-center justify-center">
-            <header className="text-center flex flex-col items-center">
-              <span
-                className="font-bold uppercase text-white"
+          <div 
+            className="relative w-full h-full flex flex-col"
+            style={{
+              paddingLeft: layout.padding.sides,
+              paddingRight: layout.padding.sides,
+              paddingBottom: layout.padding.bottom,
+            }}
+          >
+            <div 
+              className="flex flex-col items-center justify-center w-full" 
+              style={{ flexGrow: 2 }}
+            >
+              <div
+                className="font-black text-white"
                 style={{
                   fontSize: header.titleSmallFontSize,
                   letterSpacing: header.titleSmallLetterSpacing,
                   opacity: header.titleSmallOpacity,
                 }}
               >
-                {config.title}
-              </span>
-              <h1
-                className="font-black tracking-tight uppercase mt-0.5 text-white"
+                PROGRAM
+              </div>
+              <div
+                className="font-bold text-white uppercase leading-none mt-1"
                 style={{
                   fontSize: header.periodFontSize,
                 }}
               >
                 {periodText}
-              </h1>
-            </header>
-          </div>
+              </div>
+            </div>
 
-          <div
-            className="w-full shrink-0 flex flex-col"
-            style={{ gap: layout.daysGap }}
-          >
-            {page.days.map((day) => (
-              <DaySection
-                key={day.id}
-                day={day}
-                cardBackgroundColor={POSTER_CONFIG.daySection.cardBackgroundColor}
-                textColor={config.theme.textColor}
-                accentColor={config.theme.accentColor}
-              />
-            ))}
-          </div>
+            <div 
+              className="w-full flex-none flex flex-col"
+              style={{ gap: layout.daysGap }}
+            >
+              {page.days.map((day) => (
+                <DaySection
+                  key={day.id}
+                  day={day}
+                  cardBackgroundColor={POSTER_CONFIG.daySection.cardBackgroundColor}
+                  textColor={config.theme.textColor}
+                  accentColor={config.theme.accentColor}
+                />
+              ))}
+            </div>
 
-          <div className="flex-1 w-full" aria-hidden="true" />
+            <div className="w-full" style={{ flexGrow: 1 }} aria-hidden="true" />
+          </div>
         </div>
       </div>
     );

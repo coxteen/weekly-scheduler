@@ -5,9 +5,8 @@ export const POSTER_CONFIG = {
     minHeight: '850px',
     borderRadius: '36px',
     padding: {
-      top: '40px',
-      bottom: '34px',
       sides: '20px',
+      bottom: '40px',
     },
     daysGap: '16px',
   },
@@ -31,9 +30,9 @@ export const POSTER_CONFIG = {
     verticalPadding: '0px',
   },
   header: {
-    titleSmallFontSize: '11px', 
+    titleSmallFontSize: '20px', 
     titleSmallLetterSpacing: '0.22em',
-    titleSmallOpacity: '0.9',
-    periodFontSize: '24px',
+    titleSmallOpacity: '1',
+    periodFontSize: '35px',
   },
 } as const;

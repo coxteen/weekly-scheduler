@@ -51,17 +51,7 @@ export const ExportToolbar = ({
 
   return (
     <div className={`w-full ${UI_THEME.backgrounds.panel} ${UI_THEME.borders.subtle} ${UI_THEME.radii.card} ${UI_THEME.spacing.cardPadding} shadow-xl flex flex-col gap-3.5`}>
-      <div className="flex items-center justify-between">
-        <span className={`text-xs font-bold uppercase tracking-wider ${UI_THEME.text.secondary} flex items-center gap-1.5`}>
-          <Download className="w-3.5 h-3.5 text-indigo-400" />
-          Export ({pagesCount} {pagesCount > 1 ? 'Slide-uri' : 'Slide'})
-        </span>
-      </div>
-
       <div className="flex flex-col gap-1.5">
-        <label className={`text-[11px] font-semibold uppercase tracking-wider ${UI_THEME.text.muted}`}>
-          Format Fișier:
-        </label>
         <div className="grid grid-cols-3 gap-1.5 bg-[#171724] p-1 rounded-xl border border-[#262638]">
           {FORMATS.map(({ id, label, Icon }) => (
             <button

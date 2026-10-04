@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import type { ReactNode } from 'react';
 import { AppleEmojiPickerModal } from './AppleEmojiPickerModal';
 import { ScheduleSettings } from './ScheduleSettings';
 import { DayEditor } from './DayEditor';
@@ -11,6 +12,8 @@ interface ScheduleEditorProps {
   onUpdateEvent: (dayId: string, eventId: string, fields: Partial<ScheduleEvent>) => void;
   onAddEvent: (dayId: string) => void;
   onDeleteEvent: (dayId: string, eventId: string) => void;
+  paginationControls?: ReactNode;
+  exportControls?: ReactNode;
 }
 
 export const ScheduleEditor = ({
@@ -20,6 +23,8 @@ export const ScheduleEditor = ({
   onUpdateEvent,
   onAddEvent,
   onDeleteEvent,
+  paginationControls,
+  exportControls,
 }: ScheduleEditorProps) => {
   const [expandedDay, setExpandedDay] = useState<string | null>('mon');
   const [pickerTarget, setPickerTarget] = useState<{
@@ -34,6 +39,8 @@ export const ScheduleEditor = ({
         schedule={schedule}
         onStartDateChange={onStartDateChange}
         onThemeChange={onThemeChange}
+        paginationControls={paginationControls}
+        exportControls={exportControls}
       />
 
       <div className="flex flex-col gap-4">
