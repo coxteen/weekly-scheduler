@@ -7,41 +7,18 @@ export interface SchedulePage {
   totalEvents: number;
 }
 
-const MAX_EVENTS_PER_PAGE = 9;
-
 export function paginateScheduleDays(days: DaySchedule[]): SchedulePage[] {
-  const activeDays = days.filter((d) => d.isEnabled);
+  if (days.length === 0) return [];
 
-  if (activeDays.length === 0) {
-    return [{ pageNumber: 1, totalPages: 1, days: [], totalEvents: 0 }];
-  }
+  // Paginare fixă: Luni-Miercuri (primele 3) pe pagina 1, Joi-Duminică (următoarele 4) pe pagina 2.
+  const page1Days = days.slice(0, 3);
+  const page2Days = days.slice(3, 7);
 
-  const pages: DaySchedule[][] = [];
-  let currentPageDays: DaySchedule[] = [];
-  let currentCount = 0;
-
-  for (const day of activeDays) {
-    const dayEventsCount = day.events.length;
-
-    if (currentCount + dayEventsCount > MAX_EVENTS_PER_PAGE && currentPageDays.length > 0) {
-      pages.push(currentPageDays);
-      currentPageDays = [day];
-      currentCount = dayEventsCount;
-    } else {
-      currentPageDays.push(day);
-      currentCount += dayEventsCount;
-    }
-  }
-
-  if (currentPageDays.length > 0) {
-    pages.push(currentPageDays);
-  }
-
-  const totalPages = pages.length;
+  const pages = [page1Days, page2Days].filter(p => p.length > 0);
 
   return pages.map((pageDays, idx) => ({
     pageNumber: idx + 1,
-    totalPages,
+    totalPages: pages.length,
     days: pageDays,
     totalEvents: pageDays.reduce((acc, d) => acc + d.events.length, 0),
   }));

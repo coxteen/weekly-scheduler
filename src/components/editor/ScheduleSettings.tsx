@@ -7,14 +7,12 @@ interface ScheduleSettingsProps {
   schedule: WeeklyScheduleConfig;
   onStartDateChange: (date: string) => void;
   onThemeChange: (theme: ScheduleTheme) => void;
-  onToggleDay: (dayId: string) => void;
 }
 
 export const ScheduleSettings = ({
   schedule,
   onStartDateChange,
   onThemeChange,
-  onToggleDay,
 }: ScheduleSettingsProps) => {
   return (
     <div className="flex flex-col gap-6 border-b border-[#252538] pb-6">
@@ -68,30 +66,6 @@ export const ScheduleSettings = ({
                 );
               })}
             </div>
-          </div>
-        </div>
-      </div>
-
-      <div className="flex flex-col gap-3">
-        <span className={`text-xs font-bold uppercase tracking-wider text-center ${UI_THEME.text.secondary}`}>
-          Zile Incluse în Program
-        </span>
-        <div className="flex justify-center w-full">
-          <div className="flex flex-wrap justify-center items-center gap-2.5 max-w-[420px]">
-            {schedule.days.map((day) => (
-              <button
-                key={day.id}
-                type="button"
-                onClick={() => onToggleDay(day.id)}
-                className={`min-w-[85px] px-3 py-2 ${UI_THEME.radii.control} text-xs font-semibold text-center transition-all cursor-pointer border ${
-                  day.isEnabled
-                    ? 'bg-indigo-600 border-indigo-500 text-white shadow-xs'
-                    : 'bg-[#191926] border-[#29293E] text-neutral-500 line-through hover:bg-[#222234]'
-                }`}
-              >
-                {day.dayName.substring(0, 3)} ({day.dayNumber})
-              </button>
-            ))}
           </div>
         </div>
       </div>

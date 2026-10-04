@@ -248,32 +248,11 @@
       "isEnabled": true,
       "events": [
         {
-          "id": "e-25",
-          "title": "Drumeție Urbană",
-          "feature": "fotografie de stradă",
-          "time": "11:00 - 13:00",
-          "emoji": "🚶"
-        },
-        {
-          "id": "e-26",
-          "title": "Ceramică & Modelaj",
-          "feature": "lut cu uscare la aer",
-          "time": "14:00 - 16:00",
-          "emoji": "🏺"
-        },
-        {
-          "id": "e-27",
-          "title": "Design Thinking Lab",
-          "feature": "idei pentru comunitate",
-          "time": "16:30 - 18:30",
-          "emoji": "💡"
-        },
-        {
-          "id": "e-28",
-          "title": "Planificare Săptămânală",
-          "feature": "obiective & retrospectivă",
-          "time": "19:00 - 20:30",
-          "emoji": "📋"
+          "id": "e-dayoff",
+          "title": "DAY OFF",
+          "feature": "",
+          "time": "",
+          "emoji": "💤"
         }
       ]
     }

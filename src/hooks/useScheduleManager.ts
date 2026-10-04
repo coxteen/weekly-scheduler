@@ -29,15 +29,6 @@ export function useScheduleManager() {
     });
   };
 
-  const toggleDayEnabled = (dayId: string) => {
-    setSchedule((prev) => ({
-      ...prev,
-      days: prev.days.map((day) =>
-        day.id === dayId ? { ...day, isEnabled: !day.isEnabled } : day
-      ),
-    }));
-  };
-
   const handleThemeChange = (theme: ScheduleTheme) => {
     setSchedule((prev) => ({
       ...prev,
@@ -91,7 +82,6 @@ export function useScheduleManager() {
   return {
     schedule,
     handleStartDateChange,
-    toggleDayEnabled,
     handleThemeChange,
     updateEvent,
     addEvent,

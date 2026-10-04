@@ -5,13 +5,12 @@ import { ScheduleBoard } from './components/preview/ScheduleBoard';
 import { ScheduleEditor } from './components/editor/ScheduleEditor';
 import { ExportToolbar } from './components/preview/ExportToolbar';
 import { UI_THEME } from './constants/uiThemeConfig';
-import { ChevronLeft, ChevronRight, Layers } from 'lucide-react';
+import { Layers } from 'lucide-react';
 
 export default function App() {
   const {
     schedule,
     handleStartDateChange,
-    toggleDayEnabled,
     handleThemeChange,
     updateEvent,
     addEvent,
@@ -36,7 +35,6 @@ export default function App() {
           <ScheduleEditor
             schedule={schedule}
             onStartDateChange={handleStartDateChange}
-            onToggleDay={toggleDayEnabled}
             onThemeChange={handleThemeChange}
             onUpdateEvent={updateEvent}
             onAddEvent={addEvent}
@@ -93,28 +91,10 @@ export default function App() {
                     </button>
                   ))}
                 </div>
-
-                <div className="grid grid-cols-2 gap-2 mt-1">
-                  <button
-                    type="button"
-                    disabled={safePageIndex === 0}
-                    onClick={() => setActivePageIndex((prev) => Math.max(0, prev - 1))}
-                    className={`flex items-center justify-center py-2 ${UI_THEME.radii.control} bg-[#171724] border border-[#262638] text-neutral-400 disabled:opacity-30 hover:bg-[#202030] transition-colors cursor-pointer`}
-                  >
-                    <ChevronLeft className="w-4 h-4" />
-                  </button>
-                  <button
-                    type="button"
-                    disabled={safePageIndex === pages.length - 1}
-                    onClick={() => setActivePageIndex((prev) => Math.min(pages.length - 1, prev + 1))}
-                    className={`flex items-center justify-center py-2 ${UI_THEME.radii.control} bg-[#171724] border border-[#262638] text-neutral-400 disabled:opacity-30 hover:bg-[#202030] transition-colors cursor-pointer`}
-                  >
-                    <ChevronRight className="w-4 h-4" />
-                  </button>
-                </div>
               </div>
             )}
 
+            {/* Componenta de Export */}
             <ExportToolbar
               getBoardElements={getBoardElements}
               pagesCount={pages.length}
@@ -123,11 +103,11 @@ export default function App() {
 
           <div
             style={{
-              position: 'fixed',
+              position: 'absolute',
               left: '-9999px',
-              top: '-9999px',
-              opacity: 0,
+              top: '0',
               pointerEvents: 'none',
+              zIndex: -999,
             }}
             aria-hidden="true"
           >

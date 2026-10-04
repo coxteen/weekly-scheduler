@@ -16,7 +16,7 @@ export const EventCard = ({
 
   return (
     <div
-      className="flex items-start"
+      className="flex items-stretch"
       style={{
         color: textColor,
         gap: cfg.gapBetweenEmojiAndText,
@@ -24,12 +24,15 @@ export const EventCard = ({
         paddingBottom: cfg.verticalPadding,
       }}
     >
-      <div className="shrink-0 flex items-center justify-center pt-0.5">
+      <div 
+        className="shrink-0 flex items-center justify-center"
+        style={{ minHeight: cfg.emojiSize }}
+      >
         <AppleEmoji emoji={event.emoji} size={cfg.emojiSize} />
       </div>
 
       <div
-        className="flex flex-col min-w-0 flex-1"
+        className={`flex flex-col min-w-0 flex-1 ${event.time ? 'justify-between' : 'justify-center'}`}
         style={{ lineHeight: cfg.titleLineHeight }}
       >
         <div className="flex flex-wrap items-baseline gap-x-1 gap-y-0.5">
