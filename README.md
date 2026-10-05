@@ -124,4 +124,4 @@ In this project, the main customization points are the weekly date range, enable
 ## 📄 License & Author
 
 - **Author:** [Costin Ghiujan](https://github.com/coxteen)
-- **License:** Released under the MIT License.
+- **License:** Released under the [MIT License](LICENSE).
