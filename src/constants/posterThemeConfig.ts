@@ -25,6 +25,7 @@ export const DEFAULT_POSTER_SETTINGS: PosterCustomizableSettings = {
     titleFontSize: 20,
     titleLetterSpacing: 0.16,
     periodFontSize: 36,
+    periodLetterSpacing: 0.16,
   },
   daySection: {
     borderRadius: 10,

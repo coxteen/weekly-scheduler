@@ -188,6 +188,15 @@ export const PosterSettingsPanel = ({
             max={56}
             onChange={(val) => updateField('header', 'periodFontSize', val)}
           />
+          <NumericControl
+            label="Spațiere Litere Perioadă / Dată"
+            value={settings.header.periodLetterSpacing}
+            min={0}
+            max={0.5}
+            step={0.01}
+            unit="em"
+            onChange={(val) => updateField('header', 'periodLetterSpacing', val)}
+          />
         </div>
       </div>
 

@@ -58,6 +58,7 @@ export const ScheduleBoard = forwardRef<HTMLDivElement, ScheduleBoardProps>(
               className="font-bold text-white uppercase leading-none mt-1"
               style={{
                 fontSize: `${header.periodFontSize}px`,
+                letterSpacing: `${header.periodLetterSpacing}em`,
               }}
             >
               {periodText}

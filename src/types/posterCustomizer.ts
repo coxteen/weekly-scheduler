@@ -9,6 +9,7 @@ export interface PosterCustomizableSettings {
     titleFontSize: number;
     titleLetterSpacing: number;
     periodFontSize: number;
+    periodLetterSpacing: number;
   };
   daySection: {
     borderRadius: number;
