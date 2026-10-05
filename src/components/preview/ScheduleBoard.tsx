@@ -14,7 +14,11 @@ interface ScheduleBoardProps {
 
 export const ScheduleBoard = forwardRef<HTMLDivElement, ScheduleBoardProps>(
   ({ config, page, settings = DEFAULT_POSTER_SETTINGS }, ref) => {
-    const periodText = formatPeriodHeader(config.startDate, config.endDate);
+    const periodText = formatPeriodHeader(
+      config.startDate, 
+      config.endDate,
+    config.includeYear ?? false
+  );
     const { layout: fixedLayout } = POSTER_FIXED_CONFIG;
     const { layout, header } = settings;
 

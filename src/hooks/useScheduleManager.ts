@@ -1,6 +1,10 @@
 import { useState } from 'react';
 import type { WeeklyScheduleConfig, ScheduleEvent, ScheduleTheme } from '../types/schedule';
-import { generateWeekDaysFromStartDate, calculateWeekEndDate } from '../utils/dateUtils';
+import {
+  generateWeekDaysFromStartDate,
+  calculateWeekEndDate,
+  getDefaultWeekStartDate,
+} from '../utils/dateUtils';
 import rawData from '../data/mockSchedule.json';
 import { PRESET_THEMES } from '../data/themes';
 
@@ -8,9 +12,16 @@ export function useScheduleManager() {
   const [schedule, setSchedule] = useState<WeeklyScheduleConfig>(() => {
     const defaultData = rawData as WeeklyScheduleConfig;
     const forestTheme = PRESET_THEMES.find((t) => t.id === 'forest') || defaultData.theme;
+    const defaultStartDate = getDefaultWeekStartDate();
+    const defaultEndDate = calculateWeekEndDate(defaultStartDate);
+    const initialDays = generateWeekDaysFromStartDate(defaultStartDate, defaultData.days);
 
     return {
       ...defaultData,
+      startDate: defaultStartDate,
+      endDate: defaultEndDate,
+      includeYear: false,
+      days: initialDays,
       theme: forestTheme,
     };
   });
@@ -19,7 +30,7 @@ export function useScheduleManager() {
     setSchedule((prev) => {
       const updatedDays = generateWeekDaysFromStartDate(newStartDate, prev.days);
       const newEndDate = calculateWeekEndDate(newStartDate);
-      
+
       return {
         ...prev,
         startDate: newStartDate,
@@ -27,6 +38,13 @@ export function useScheduleManager() {
         days: updatedDays,
       };
     });
+  };
+
+  const handleIncludeYearToggle = (include: boolean) => {
+    setSchedule((prev) => ({
+      ...prev,
+      includeYear: include,
+    }));
   };
 
   const handleThemeChange = (theme: ScheduleTheme) => {
@@ -82,6 +100,7 @@ export function useScheduleManager() {
   return {
     schedule,
     handleStartDateChange,
+    handleIncludeYearToggle,
     handleThemeChange,
     updateEvent,
     addEvent,

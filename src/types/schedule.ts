@@ -29,6 +29,7 @@ export interface WeeklyScheduleConfig {
   title: string;
   startDate: string;
   endDate: string;
+  includeYear?: boolean;
   theme: ScheduleTheme;
   days: DaySchedule[];
 }

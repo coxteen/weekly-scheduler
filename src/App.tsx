@@ -13,6 +13,7 @@ export default function App() {
   const {
     schedule,
     handleStartDateChange,
+    handleIncludeYearToggle,
     handleThemeChange,
     updateEvent,
     addEvent,
@@ -64,13 +65,13 @@ export default function App() {
       className={`min-h-screen ${UI_THEME.backgrounds.app} ${UI_THEME.text.primary} p-4 md:p-6 lg:p-8 flex justify-center`}
     >
       <main className="w-full max-w-[1750px] grid grid-cols-1 xl:grid-cols-12 gap-6 xl:gap-8 items-start">
-        {/* Editor coloana stanga */}
         <section
           className={`xl:col-span-5 w-full ${UI_THEME.backgrounds.panel} ${UI_THEME.borders.subtle} ${UI_THEME.radii.panel} ${UI_THEME.spacing.panelPadding} shadow-2xl`}
         >
           <ScheduleEditor
             schedule={schedule}
             onStartDateChange={handleStartDateChange}
+            onIncludeYearChange={handleIncludeYearToggle}
             onThemeChange={handleThemeChange}
             onUpdateEvent={updateEvent}
             onAddEvent={addEvent}

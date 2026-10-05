@@ -8,6 +8,7 @@ import type { WeeklyScheduleConfig, ScheduleTheme, ScheduleEvent } from '../../t
 interface ScheduleEditorProps {
   schedule: WeeklyScheduleConfig;
   onStartDateChange: (date: string) => void;
+  onIncludeYearChange?: (include: boolean) => void;
   onThemeChange: (theme: ScheduleTheme) => void;
   onUpdateEvent: (dayId: string, eventId: string, fields: Partial<ScheduleEvent>) => void;
   onAddEvent: (dayId: string) => void;
@@ -19,6 +20,7 @@ interface ScheduleEditorProps {
 export const ScheduleEditor = ({
   schedule,
   onStartDateChange,
+  onIncludeYearChange,
   onThemeChange,
   onUpdateEvent,
   onAddEvent,
@@ -38,6 +40,7 @@ export const ScheduleEditor = ({
       <ScheduleSettings
         schedule={schedule}
         onStartDateChange={onStartDateChange}
+        onIncludeYearChange={onIncludeYearChange}
         onThemeChange={onThemeChange}
         paginationControls={paginationControls}
         exportControls={exportControls}

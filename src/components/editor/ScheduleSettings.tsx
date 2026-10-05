@@ -6,14 +6,16 @@ import type { ReactNode } from 'react';
 interface ScheduleSettingsProps {
   schedule: WeeklyScheduleConfig;
   onStartDateChange: (date: string) => void;
+  onIncludeYearChange?: (include: boolean) => void;
   onThemeChange: (theme: ScheduleTheme) => void;
   paginationControls?: ReactNode;
   exportControls?: ReactNode;
 }
 
 export const ScheduleSettings = ({
-  schedule, 
+  schedule,
   onStartDateChange,
+  onIncludeYearChange,
   onThemeChange,
   paginationControls,
   exportControls,
@@ -22,13 +24,23 @@ export const ScheduleSettings = ({
     <div className="flex flex-col gap-6 border-b border-[#252538] pb-6 w-full">
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6 xl:gap-8 w-full items-stretch">
         
-        <div className="flex flex-col gap-4 w-full h-full">
+        <div className="flex flex-col gap-3 w-full h-full">
           <input
             type="date"
             value={schedule.startDate}
             onChange={(e) => onStartDateChange(e.target.value)}
             className={`w-full border border-[#2E2E44] ${UI_THEME.radii.control} px-4 py-2.5 text-sm ${UI_THEME.backgrounds.input} ${UI_THEME.text.primary} outline-none ${UI_THEME.backgrounds.inputFocus} scheme-dark text-center cursor-pointer`}
           />
+
+          <label className="flex items-center justify-between px-3 py-1.5 bg-[#171724] border border-[#26263A] rounded-lg cursor-pointer select-none">
+            <span className="text-xs text-neutral-300 font-medium">Include An</span>
+            <input
+              type="checkbox"
+              checked={Boolean(schedule.includeYear)}
+              onChange={(e) => onIncludeYearChange?.(e.target.checked)}
+              className="w-4 h-4 rounded border-[#2E2E44] bg-[#121218] accent-indigo-600 cursor-pointer"
+            />
+          </label>
 
           <div className="w-full flex-1 bg-[#181825] p-3 rounded-xl border border-[#26263A] flex justify-center items-center shadow-inner">
             <div 

@@ -1,6 +1,22 @@
-import { format, addDays, parseISO, getDate } from 'date-fns';
+import {
+  format,
+  addDays,
+  parseISO,
+  getDate,
+  isMonday,
+  nextMonday,
+  isSameMonth,
+  isSameYear,
+  getYear,
+} from 'date-fns';
 import { ro } from 'date-fns/locale';
 import type { DaySchedule } from '../types/schedule';
+
+export function getDefaultWeekStartDate(): string {
+  const today = new Date();
+  const targetDate = isMonday(today) ? today : nextMonday(today);
+  return format(targetDate, 'yyyy-MM-dd');
+}
 
 export function generateWeekDaysFromStartDate(
   startDateStr: string,
@@ -25,11 +41,38 @@ export function generateWeekDaysFromStartDate(
   });
 }
 
-export function formatPeriodHeader(startDateStr: string, endDateStr: string): string {
+export function formatPeriodHeader(
+  startDateStr: string,
+  endDateStr: string,
+  includeYear: boolean = false
+): string {
   try {
     const start = parseISO(startDateStr);
     const end = parseISO(endDateStr);
-    return `${format(start, 'd MMM', { locale: ro })} - ${format(end, 'd MMM', { locale: ro })}`;
+
+    const startDay = getDate(start);
+    const endDay = getDate(end);
+    const startMonth = format(start, 'MMMM', { locale: ro }).toUpperCase();
+    const endMonth = format(end, 'MMMM', { locale: ro }).toUpperCase();
+    const startYear = getYear(start);
+    const endYear = getYear(end);
+
+    const sameMonth = isSameMonth(start, end);
+    const sameYear = isSameYear(start, end);
+
+    if (sameMonth) {
+      const yearPart = includeYear ? ` ${endYear}` : '';
+      return `${startDay} - ${endDay} ${endMonth}${yearPart}`;
+    }
+
+    if (includeYear) {
+      if (sameYear) {
+        return `${startDay} ${startMonth} - ${endDay} ${endMonth} ${endYear}`;
+      }
+      return `${startDay} ${startMonth} ${startYear} - ${endDay} ${endMonth} ${endYear}`;
+    }
+
+    return `${startDay} ${startMonth} - ${endDay} ${endMonth}`;
   } catch {
     return '';
   }
