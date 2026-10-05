@@ -10,7 +10,6 @@ export interface SchedulePage {
 export function paginateScheduleDays(days: DaySchedule[]): SchedulePage[] {
   if (days.length === 0) return [];
 
-  // Paginare fixă: Luni-Miercuri (primele 3) pe pagina 1, Joi-Duminică (următoarele 4) pe pagina 2.
   const page1Days = days.slice(0, 3);
   const page2Days = days.slice(3, 7);
 

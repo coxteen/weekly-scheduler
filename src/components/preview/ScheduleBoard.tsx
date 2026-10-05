@@ -1,19 +1,22 @@
 import { forwardRef } from 'react';
 import type { WeeklyScheduleConfig } from '../../types/schedule';
 import type { SchedulePage } from '../../utils/paginationUtils';
+import type { PosterCustomizableSettings } from '../../types/posterCustomizer';
 import { formatPeriodHeader } from '../../utils/dateUtils';
 import { DaySection } from './DaySection';
-import { POSTER_CONFIG } from '../../constants/posterThemeConfig';
+import { POSTER_FIXED_CONFIG, DEFAULT_POSTER_SETTINGS } from '../../constants/posterThemeConfig';
 
 interface ScheduleBoardProps {
   config: WeeklyScheduleConfig;
   page: SchedulePage;
+  settings?: PosterCustomizableSettings;
 }
 
 export const ScheduleBoard = forwardRef<HTMLDivElement, ScheduleBoardProps>(
-  ({ config, page }, ref) => {
+  ({ config, page, settings = DEFAULT_POSTER_SETTINGS }, ref) => {
     const periodText = formatPeriodHeader(config.startDate, config.endDate);
-    const { layout, header } = POSTER_CONFIG;
+    const { layout: fixedLayout } = POSTER_FIXED_CONFIG;
+    const { layout, header } = settings;
 
     return (
       <div className="w-full max-w-[420px] flex justify-center">
@@ -24,13 +27,14 @@ export const ScheduleBoard = forwardRef<HTMLDivElement, ScheduleBoardProps>(
           style={{
             backgroundColor: config.theme.backgroundColor,
             color: config.theme.textColor,
-            maxWidth: layout.maxWidth,
-            aspectRatio: layout.aspectRatio,
-            minHeight: layout.minHeight,
-            borderRadius: layout.borderRadius,
-            paddingLeft: layout.padding.sides,
-            paddingRight: layout.padding.sides,
-            paddingBottom: layout.padding.bottom,
+            maxWidth: fixedLayout.maxWidth,
+            aspectRatio: fixedLayout.aspectRatio,
+            minHeight: fixedLayout.minHeight,
+            borderRadius: fixedLayout.borderRadius,
+            paddingLeft: `${layout.paddingHorizontal}px`,
+            paddingRight: `${layout.paddingHorizontal}px`,
+            paddingTop: `${layout.paddingTop}px`,
+            paddingBottom: `${layout.paddingBottom}px`,
           }}
         >
           <div 
@@ -40,9 +44,8 @@ export const ScheduleBoard = forwardRef<HTMLDivElement, ScheduleBoardProps>(
             <div
               className="font-black text-white"
               style={{
-                fontSize: header.titleSmallFontSize,
-                letterSpacing: header.titleSmallLetterSpacing,
-                opacity: header.titleSmallOpacity,
+                fontSize: `${header.titleFontSize}px`,
+                letterSpacing: `${header.titleLetterSpacing}em`,
               }}
             >
               PROGRAM
@@ -50,7 +53,7 @@ export const ScheduleBoard = forwardRef<HTMLDivElement, ScheduleBoardProps>(
             <div
               className="font-bold text-white uppercase leading-none mt-1"
               style={{
-                fontSize: header.periodFontSize,
+                fontSize: `${header.periodFontSize}px`,
               }}
             >
               {periodText}
@@ -59,13 +62,13 @@ export const ScheduleBoard = forwardRef<HTMLDivElement, ScheduleBoardProps>(
 
           <div 
             className="w-full flex-none flex flex-col"
-            style={{ gap: layout.daysGap }}
+            style={{ gap: `${layout.daysGap}px` }}
           >
             {page.days.map((day) => (
               <DaySection
                 key={day.id}
                 day={day}
-                cardBackgroundColor={POSTER_CONFIG.daySection.cardBackgroundColor}
+                settings={settings}
                 textColor={config.theme.textColor}
                 accentColor={config.theme.accentColor}
               />

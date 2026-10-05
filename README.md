@@ -17,12 +17,6 @@
 
 ---
 
-<p align="center">
-  <img src="./assets/demo.gif" alt="Weekly Scheduler preview" width="850">
-</p>
-
----
-
 ## 📌 Problem & Motivation
 
 Planning a week of workshops, sessions, or recurring activities often means juggling calendars, notes, and visual exports across multiple tools. Small changes can ripple through the whole schedule, creating inconsistent timings, missing days, and last-minute formatting issues that slow everyone down.
@@ -130,4 +124,4 @@ In this project, the main customization points are the weekly date range, enable
 ## 📄 License & Author
 
 - **Author:** [Costin Ghiujan](https://github.com/coxteen)
-- **License:** Released under the [MIT License](LICENSE).
+- **License:** Released under the MIT License.

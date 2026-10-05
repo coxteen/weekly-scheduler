@@ -1,39 +1,47 @@
-export const POSTER_CONFIG = {
+import type { PosterCustomizableSettings } from '../types/posterCustomizer';
+
+export const POSTER_FIXED_CONFIG = {
   layout: {
     maxWidth: '420px',
     aspectRatio: '9 / 19.5',
     minHeight: '850px',
-    borderRadius: '36px',
-    padding: {
-      sides: '20px',
-      bottom: '40px',
-    },
-    daysGap: '16px',
+    borderRadius: '30px',
   },
   daySection: {
     cardBackgroundColor: 'rgba(0, 0, 0, 0.20)',
-    border: '1px solid rgba(0, 0, 0, 0.12)',
-    borderRadius: '14px',
-    padding: '8px 12px',
-    headerFontSize: '12px',
+    border: '1px solid rgba(0, 0, 0, 0.10)',
     headerLetterSpacing: '0.05em',
-    eventsGap: '8px',
+  },
+} as const;
+
+export const DEFAULT_POSTER_SETTINGS: PosterCustomizableSettings = {
+  layout: {
+    paddingHorizontal: 30,
+    paddingTop: 0,
+    paddingBottom: 40,
+    daysGap: 20,
+  },
+  header: {
+    titleFontSize: 20,
+    titleLetterSpacing: 0.16,
+    periodFontSize: 36,
+  },
+  daySection: {
+    borderRadius: 10,
+    paddingVertical: 8,
+    paddingHorizontal: 12,
+    eventsGap: 8,
+    headerFontSize: 12,
   },
   eventCard: {
     emojiSize: 24,
-    gapBetweenEmojiAndText: '12px',
-    gapBetweenTimeAndTitle: '0px',
-    titleFontSize: '14px',
-    titleLineHeight: '1',
-    featureFontSize: '12px',
-    slashFontSize: '12px',
-    timeFontSize: '10px',
-    verticalPadding: '0px',
+    gapEmojiToContent: 12,
+    gapTimeToTitle: 0,
+    titleFontSize: 14,
+    titleLineHeight: 14,
+    featureFontSize: 12,
+    slashFontSize: 12,
+    timeFontSize: 10,
+    paddingVertical: 0,
   },
-  header: {
-    titleSmallFontSize: '20px', 
-    titleSmallLetterSpacing: '0.16em',
-    titleSmallOpacity: '1',
-    periodFontSize: '36px',
-  },
-} as const;
+};
