@@ -35,7 +35,6 @@ export interface PosterPreset {
   id: string;
   name: string;
   isBuiltIn?: boolean;
-  isDefault?: boolean;
   settings: Record<number, PosterCustomizableSettings>;
   updatedAt: string;
 }

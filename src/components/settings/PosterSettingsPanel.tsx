@@ -9,7 +9,6 @@ import {
   Bookmark,
   Plus,
   Trash2,
-  Star,
   Download,
   Upload,
   Save,
@@ -95,7 +94,6 @@ interface PosterSettingsPanelProps {
   onSelectPreset: (presetId: string) => void;
   onSaveNewPreset: (name: string) => void;
   onUpdateActivePreset: () => void;
-  onSetDefaultPreset: (presetId: string) => void;
   onDeletePreset: (presetId: string) => void;
   onExportPresets: () => void;
   onImportPresets: (imported: PosterPreset[]) => void;
@@ -112,7 +110,6 @@ export const PosterSettingsPanel = ({
   onSelectPreset,
   onSaveNewPreset,
   onUpdateActivePreset,
-  onSetDefaultPreset,
   onDeletePreset,
   onExportPresets,
   onImportPresets,
@@ -242,7 +239,7 @@ export const PosterSettingsPanel = ({
           >
             {presets.map((preset) => (
               <option key={preset.id} value={preset.id}>
-                {preset.name} {preset.isDefault ? '★' : ''}
+                {preset.name}
               </option>
             ))}
           </select>
@@ -277,39 +274,24 @@ export const PosterSettingsPanel = ({
           </form>
         )}
 
-        {/* Acțiuni pentru presetul selectat */}
+        {/* Acțiuni pentru presetul selectat: Actualizează & Șterge */}
         <div className="flex items-center justify-between text-[11px] text-neutral-400 pt-0.5">
-          <div className="flex items-center gap-2">
-            {!activePreset?.isBuiltIn && (
-              <button
-                type="button"
-                onClick={() => {
-                  onUpdateActivePreset();
-                  showNotification('Profil actualizat!');
-                }}
-                className="flex items-center gap-1 hover:text-white transition-colors cursor-pointer"
-                title="Suprascrie cu setările curente"
-              >
-                <Save className="w-3 h-3 text-indigo-400" />
-                <span>Actualizează</span>
-              </button>
-            )}
-
+          {!activePreset?.isBuiltIn ? (
             <button
               type="button"
               onClick={() => {
-                onSetDefaultPreset(activePresetId);
-                showNotification('Setat ca implicit!');
+                onUpdateActivePreset();
+                showNotification('Profil actualizat!');
               }}
-              className={`flex items-center gap-1 transition-colors cursor-pointer ${
-                activePreset?.isDefault ? 'text-amber-400 font-semibold' : 'hover:text-amber-300'
-              }`}
-              title="Încarcă automat acest profil la deschiderea paginii"
+              className="flex items-center gap-1 hover:text-white transition-colors cursor-pointer"
+              title="Suprascrie cu setările curente"
             >
-              <Star className="w-3 h-3" />
-              <span>{activePreset?.isDefault ? 'Implicit' : 'Setează Implicit'}</span>
+              <Save className="w-3 h-3 text-indigo-400" />
+              <span>Actualizează profilul</span>
             </button>
-          </div>
+          ) : (
+            <span className="text-[11px] text-neutral-500 italic">Profil de sistem</span>
+          )}
 
           {!activePreset?.isBuiltIn && (
             <button

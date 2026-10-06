@@ -40,8 +40,7 @@ export default function App() {
 
   // Setări slide-uri curente
   const [slidesSettings, setSlidesSettings] = useState<Record<number, PosterCustomizableSettings>>(() => {
-    const stored = loadStoredSlidesSettings();
-    return stored;
+    return loadStoredSlidesSettings();
   });
 
   const boardRefs = useRef<(HTMLDivElement | null)[]>([]);
@@ -107,7 +106,6 @@ export default function App() {
       id: newId,
       name,
       isBuiltIn: false,
-      isDefault: false,
       updatedAt: new Date().toISOString(),
       settings: JSON.parse(JSON.stringify(slidesSettings)),
     };
@@ -130,15 +128,6 @@ export default function App() {
     );
   };
 
-  const handleSetDefaultPreset = (presetId: string) => {
-    setPresets((prev) =>
-      prev.map((p) => ({
-        ...p,
-        isDefault: p.id === presetId,
-      }))
-    );
-  };
-
   const handleDeletePreset = (presetId: string) => {
     setPresets((prev) => prev.filter((p) => p.id !== presetId));
     setActivePresetId('preset-default');
@@ -151,9 +140,8 @@ export default function App() {
   const handleImportPresets = (imported: PosterPreset[]) => {
     setPresets(imported);
     if (imported.length > 0) {
-      const defaultOne = imported.find((p) => p.isDefault) || imported[0];
-      setActivePresetId(defaultOne.id);
-      setSlidesSettings(JSON.parse(JSON.stringify(defaultOne.settings)));
+      setActivePresetId(imported[0].id);
+      setSlidesSettings(JSON.parse(JSON.stringify(imported[0].settings)));
     }
   };
 
@@ -269,7 +257,6 @@ export default function App() {
             onSelectPreset={handleSelectPreset}
             onSaveNewPreset={handleSaveNewPreset}
             onUpdateActivePreset={handleUpdateActivePreset}
-            onSetDefaultPreset={handleSetDefaultPreset}
             onDeletePreset={handleDeletePreset}
             onExportPresets={() => exportPresetsToJson(presets)}
             onImportPresets={handleImportPresets}

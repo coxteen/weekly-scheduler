@@ -9,13 +9,11 @@ const STORAGE_KEYS = {
   ACTIVE_PRESET_ID: 'zborhub_poster_active_preset_id_v1',
 } as const;
 
-// Păstrăm exclusiv profilul Default ZborHub
 export const BUILT_IN_PRESETS: PosterPreset[] = [
   {
     id: 'preset-default',
     name: 'Default ZborHub',
     isBuiltIn: true,
-    isDefault: true,
     updatedAt: new Date().toISOString(),
     settings: {
       0: { ...DEFAULT_POSTER_SETTINGS },
