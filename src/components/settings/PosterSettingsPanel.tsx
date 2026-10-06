@@ -1,7 +1,19 @@
-import { useState, type ChangeEvent } from 'react';
-import type { PosterCustomizableSettings } from '../../types/posterCustomizer';
+import { useState, useRef, type ChangeEvent } from 'react';
+import type { PosterCustomizableSettings, PosterPreset } from '../../types/posterCustomizer';
 import { UI_THEME } from '../../constants/uiThemeConfig';
-import { Sliders, RotateCcw, Copy, Check } from 'lucide-react';
+import {
+  Sliders,
+  RotateCcw,
+  Copy,
+  Check,
+  Bookmark,
+  Plus,
+  Trash2,
+  Star,
+  Download,
+  Upload,
+  Save,
+} from 'lucide-react';
 import { DEFAULT_POSTER_SETTINGS } from '../../constants/posterThemeConfig';
 
 interface NumericControlProps {
@@ -77,6 +89,16 @@ interface PosterSettingsPanelProps {
   activePageIndex: number;
   totalPages: number;
   onCopySettingsToSlide: (targetSlideIndex: number) => void;
+  // Preset Props
+  presets: PosterPreset[];
+  activePresetId: string;
+  onSelectPreset: (presetId: string) => void;
+  onSaveNewPreset: (name: string) => void;
+  onUpdateActivePreset: () => void;
+  onSetDefaultPreset: (presetId: string) => void;
+  onDeletePreset: (presetId: string) => void;
+  onExportPresets: () => void;
+  onImportPresets: (imported: PosterPreset[]) => void;
 }
 
 export const PosterSettingsPanel = ({
@@ -85,8 +107,28 @@ export const PosterSettingsPanel = ({
   activePageIndex,
   totalPages,
   onCopySettingsToSlide,
+  presets,
+  activePresetId,
+  onSelectPreset,
+  onSaveNewPreset,
+  onUpdateActivePreset,
+  onSetDefaultPreset,
+  onDeletePreset,
+  onExportPresets,
+  onImportPresets,
 }: PosterSettingsPanelProps) => {
   const [copiedTo, setCopiedTo] = useState<number | null>(null);
+  const [isCreatingPreset, setIsCreatingPreset] = useState(false);
+  const [newPresetName, setNewPresetName] = useState('');
+  const [actionNotice, setActionNotice] = useState<string | null>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
+  const activePreset = presets.find((p) => p.id === activePresetId) || presets[0];
+
+  const showNotification = (msg: string) => {
+    setActionNotice(msg);
+    setTimeout(() => setActionNotice(null), 2000);
+  };
 
   const updateField = <
     Section extends keyof PosterCustomizableSettings,
@@ -115,7 +157,37 @@ export const PosterSettingsPanel = ({
     setTimeout(() => setCopiedTo(null), 1800);
   };
 
-  // Ceilalți indici de slide pe care se poate copia
+  const handleSaveNewSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!newPresetName.trim()) return;
+    onSaveNewPreset(newPresetName.trim());
+    setNewPresetName('');
+    setIsCreatingPreset(false);
+    showNotification('Preset salvat cu succes!');
+  };
+
+  const handleFileUpload = (e: ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.onload = (event) => {
+      try {
+        const parsed = JSON.parse(event.target?.result as string);
+        if (Array.isArray(parsed)) {
+          onImportPresets(parsed);
+          showNotification('Preseturi importate cu succes!');
+        } else {
+          alert('Format fișier invalid.');
+        }
+      } catch {
+        alert('Nu s-a putut citi fișierul JSON.');
+      }
+    };
+    reader.readAsText(file);
+    e.target.value = '';
+  };
+
   const otherSlideIndices = Array.from({ length: totalPages }, (_, i) => i).filter(
     (i) => i !== activePageIndex
   );
@@ -124,6 +196,147 @@ export const PosterSettingsPanel = ({
     <div
       className={`w-full max-w-[340px] ${UI_THEME.backgrounds.panel} ${UI_THEME.borders.subtle} ${UI_THEME.radii.card} ${UI_THEME.spacing.cardPadding} shadow-xl flex flex-col gap-4 max-h-[85vh] overflow-y-auto`}
     >
+      {/* 0. PRESET MANAGER SECTION */}
+      <div className="flex flex-col gap-2.5 border-b border-[#262638] pb-3.5">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-1.5">
+            <Bookmark className="w-4 h-4 text-indigo-400" />
+            <span className="text-xs font-bold text-white tracking-wide">
+              Profile de Setări
+            </span>
+          </div>
+
+          <div className="flex items-center gap-1">
+            <button
+              type="button"
+              onClick={onExportPresets}
+              title="Exportă preseturi (JSON)"
+              className="p-1 rounded text-neutral-400 hover:text-white hover:bg-[#202030] transition-colors cursor-pointer"
+            >
+              <Download className="w-3.5 h-3.5" />
+            </button>
+            <button
+              type="button"
+              onClick={() => fileInputRef.current?.click()}
+              title="Importă preseturi (JSON)"
+              className="p-1 rounded text-neutral-400 hover:text-white hover:bg-[#202030] transition-colors cursor-pointer"
+            >
+              <Upload className="w-3.5 h-3.5" />
+            </button>
+            <input
+              type="file"
+              ref={fileInputRef}
+              onChange={handleFileUpload}
+              accept=".json"
+              className="hidden"
+            />
+          </div>
+        </div>
+
+        {/* Dropdown selector preset */}
+        <div className="flex items-center gap-1.5">
+          <select
+            value={activePresetId}
+            onChange={(e) => onSelectPreset(e.target.value)}
+            className="flex-1 bg-[#171724] border border-[#2a2a3e] rounded-lg px-2.5 py-1.5 text-xs text-white outline-none cursor-pointer focus:border-indigo-500 font-medium"
+          >
+            {presets.map((preset) => (
+              <option key={preset.id} value={preset.id}>
+                {preset.name} {preset.isDefault ? '★' : ''}
+              </option>
+            ))}
+          </select>
+
+          <button
+            type="button"
+            onClick={() => setIsCreatingPreset(!isCreatingPreset)}
+            title="Salvează ca profil nou"
+            className="p-1.5 rounded-lg bg-indigo-600/20 text-indigo-300 hover:bg-indigo-600 hover:text-white transition-all cursor-pointer border border-indigo-500/30"
+          >
+            <Plus className="w-3.5 h-3.5" />
+          </button>
+        </div>
+
+        {/* Formular adăugare profil nou */}
+        {isCreatingPreset && (
+          <form onSubmit={handleSaveNewSubmit} className="flex gap-1.5 pt-1">
+            <input
+              type="text"
+              placeholder="Nume profil..."
+              value={newPresetName}
+              onChange={(e) => setNewPresetName(e.target.value)}
+              className="flex-1 px-2.5 py-1 bg-[#12121c] border border-indigo-500/50 rounded-md text-xs text-white outline-none"
+              autoFocus
+            />
+            <button
+              type="submit"
+              className="px-2.5 py-1 bg-indigo-600 rounded-md text-xs font-semibold text-white hover:bg-indigo-500 cursor-pointer"
+            >
+              Salvați
+            </button>
+          </form>
+        )}
+
+        {/* Acțiuni pentru presetul selectat */}
+        <div className="flex items-center justify-between text-[11px] text-neutral-400 pt-0.5">
+          <div className="flex items-center gap-2">
+            {!activePreset?.isBuiltIn && (
+              <button
+                type="button"
+                onClick={() => {
+                  onUpdateActivePreset();
+                  showNotification('Profil actualizat!');
+                }}
+                className="flex items-center gap-1 hover:text-white transition-colors cursor-pointer"
+                title="Suprascrie cu setările curente"
+              >
+                <Save className="w-3 h-3 text-indigo-400" />
+                <span>Actualizează</span>
+              </button>
+            )}
+
+            <button
+              type="button"
+              onClick={() => {
+                onSetDefaultPreset(activePresetId);
+                showNotification('Setat ca implicit!');
+              }}
+              className={`flex items-center gap-1 transition-colors cursor-pointer ${
+                activePreset?.isDefault ? 'text-amber-400 font-semibold' : 'hover:text-amber-300'
+              }`}
+              title="Încarcă automat acest profil la deschiderea paginii"
+            >
+              <Star className="w-3 h-3" />
+              <span>{activePreset?.isDefault ? 'Implicit' : 'Setează Implicit'}</span>
+            </button>
+          </div>
+
+          {!activePreset?.isBuiltIn && (
+            <button
+              type="button"
+              onClick={() => {
+                if (confirm(`Sigur vrei să ștergi presetul "${activePreset?.name}"?`)) {
+                  onDeletePreset(activePresetId);
+                }
+              }}
+              className="flex items-center gap-1 text-red-400 hover:text-red-300 transition-colors cursor-pointer"
+              title="Șterge preset"
+            >
+              <Trash2 className="w-3 h-3" />
+              <span>Șterge</span>
+            </button>
+          )}
+        </div>
+
+        {/* Notificare scurtă */}
+        {actionNotice && (
+          <div className="bg-emerald-500/15 border border-emerald-500/30 text-emerald-300 text-[11px] py-1 px-2 rounded text-center">
+            {actionNotice}
+          </div>
+        )}
+      </div>
+
+      {/* HEADER AJUSTARE SLIDE CURENT */}
       <div className="flex flex-col gap-2 border-b border-[#262638] pb-3">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
