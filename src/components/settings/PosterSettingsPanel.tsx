@@ -23,6 +23,8 @@ interface NumericControlProps {
   step?: number;
   unit?: string;
   onChange: (val: number) => void;
+  onInteractionStart?: () => void;
+  onInteractionEnd?: () => void;
 }
 
 const NumericControl = ({
@@ -33,6 +35,8 @@ const NumericControl = ({
   step = 1,
   unit = 'px',
   onChange,
+  onInteractionStart,
+  onInteractionEnd,
 }: NumericControlProps) => {
   const handleInputChange = (e: ChangeEvent<HTMLInputElement>) => {
     const parsed = parseFloat(e.target.value);
@@ -75,7 +79,12 @@ const NumericControl = ({
           step={step}
           value={value}
           onChange={handleSliderChange}
-          className="w-full h-1.5 bg-[#1c1c2e] rounded-lg appearance-none cursor-pointer accent-indigo-500 focus:outline-none"
+          onTouchStart={onInteractionStart}
+          onTouchEnd={onInteractionEnd}
+          onTouchCancel={onInteractionEnd}
+          onMouseDown={onInteractionStart}
+          onMouseUp={onInteractionEnd}
+          className="w-full h-2 bg-[#1c1c2e] rounded-lg appearance-none cursor-pointer accent-indigo-500 focus:outline-none touch-none"
         />
       </div>
     </div>
@@ -97,6 +106,9 @@ interface PosterSettingsPanelProps {
   onDeletePreset: (presetId: string) => void;
   onExportPresets: () => void;
   onImportPresets: (imported: PosterPreset[]) => void;
+  // Callback-uri pentru Peek Preview pe mobil
+  onInteractionStart?: () => void;
+  onInteractionEnd?: () => void;
 }
 
 export const PosterSettingsPanel = ({
@@ -113,6 +125,8 @@ export const PosterSettingsPanel = ({
   onDeletePreset,
   onExportPresets,
   onImportPresets,
+  onInteractionStart,
+  onInteractionEnd,
 }: PosterSettingsPanelProps) => {
   const [copiedTo, setCopiedTo] = useState<number | null>(null);
   const [isCreatingPreset, setIsCreatingPreset] = useState(false);
@@ -274,7 +288,7 @@ export const PosterSettingsPanel = ({
           </form>
         )}
 
-        {/* Acțiuni pentru presetul selectat: Actualizează & Șterge */}
+        {/* Acțiuni pentru presetul selectat */}
         <div className="flex items-center justify-between text-[11px] text-neutral-400 pt-0.5">
           {!activePreset?.isBuiltIn ? (
             <button
@@ -310,7 +324,6 @@ export const PosterSettingsPanel = ({
           )}
         </div>
 
-        {/* Notificare scurtă */}
         {actionNotice && (
           <div className="bg-emerald-500/15 border border-emerald-500/30 text-emerald-300 text-[11px] py-1 px-2 rounded text-center">
             {actionNotice}
@@ -337,7 +350,6 @@ export const PosterSettingsPanel = ({
           </button>
         </div>
 
-        {/* Butoane copiere setări către alte slide-uri */}
         {otherSlideIndices.length > 0 && (
           <div className="flex flex-wrap gap-1.5 pt-1">
             {otherSlideIndices.map((targetIdx) => {
@@ -383,6 +395,8 @@ export const PosterSettingsPanel = ({
             min={10}
             max={200}
             onChange={(val) => updateField('layout', 'paddingHorizontal', val)}
+            onInteractionStart={onInteractionStart}
+            onInteractionEnd={onInteractionEnd}
           />
           <NumericControl
             label="Margine Sus (Padding Top)"
@@ -390,6 +404,8 @@ export const PosterSettingsPanel = ({
             min={0}
             max={200}
             onChange={(val) => updateField('layout', 'paddingTop', val)}
+            onInteractionStart={onInteractionStart}
+            onInteractionEnd={onInteractionEnd}
           />
           <NumericControl
             label="Margine Jos (Padding Bottom)"
@@ -397,6 +413,8 @@ export const PosterSettingsPanel = ({
             min={10}
             max={250}
             onChange={(val) => updateField('layout', 'paddingBottom', val)}
+            onInteractionStart={onInteractionStart}
+            onInteractionEnd={onInteractionEnd}
           />
           <NumericControl
             label="Spațiu Între Zile (Days Gap)"
@@ -404,6 +422,8 @@ export const PosterSettingsPanel = ({
             min={0}
             max={120}
             onChange={(val) => updateField('layout', 'daysGap', val)}
+            onInteractionStart={onInteractionStart}
+            onInteractionEnd={onInteractionEnd}
           />
         </div>
       </div>
@@ -420,6 +440,8 @@ export const PosterSettingsPanel = ({
             min={24}
             max={100}
             onChange={(val) => updateField('header', 'titleFontSize', val)}
+            onInteractionStart={onInteractionStart}
+            onInteractionEnd={onInteractionEnd}
           />
           <NumericControl
             label="Spațiere Litere Titlu"
@@ -429,6 +451,8 @@ export const PosterSettingsPanel = ({
             step={0.01}
             unit="em"
             onChange={(val) => updateField('header', 'titleLetterSpacing', val)}
+            onInteractionStart={onInteractionStart}
+            onInteractionEnd={onInteractionEnd}
           />
           <NumericControl
             label="Mărime Perioadă / Dată"
@@ -436,6 +460,8 @@ export const PosterSettingsPanel = ({
             min={30}
             max={120}
             onChange={(val) => updateField('header', 'periodFontSize', val)}
+            onInteractionStart={onInteractionStart}
+            onInteractionEnd={onInteractionEnd}
           />
           <NumericControl
             label="Spațiere Litere Perioadă / Dată"
@@ -445,6 +471,8 @@ export const PosterSettingsPanel = ({
             step={0.01}
             unit="em"
             onChange={(val) => updateField('header', 'periodLetterSpacing', val)}
+            onInteractionStart={onInteractionStart}
+            onInteractionEnd={onInteractionEnd}
           />
         </div>
       </div>
@@ -461,6 +489,8 @@ export const PosterSettingsPanel = ({
             min={0}
             max={64}
             onChange={(val) => updateField('daySection', 'borderRadius', val)}
+            onInteractionStart={onInteractionStart}
+            onInteractionEnd={onInteractionEnd}
           />
           <NumericControl
             label="Padding Vertical (Sus/Jos)"
@@ -468,6 +498,8 @@ export const PosterSettingsPanel = ({
             min={0}
             max={80}
             onChange={(val) => updateField('daySection', 'paddingVertical', val)}
+            onInteractionStart={onInteractionStart}
+            onInteractionEnd={onInteractionEnd}
           />
           <NumericControl
             label="Padding Orizontal (Stânga/Dreapta)"
@@ -475,6 +507,8 @@ export const PosterSettingsPanel = ({
             min={0}
             max={80}
             onChange={(val) => updateField('daySection', 'paddingHorizontal', val)}
+            onInteractionStart={onInteractionStart}
+            onInteractionEnd={onInteractionEnd}
           />
           <NumericControl
             label="Mărime Text Nume Zi"
@@ -482,6 +516,8 @@ export const PosterSettingsPanel = ({
             min={14}
             max={48}
             onChange={(val) => updateField('daySection', 'headerFontSize', val)}
+            onInteractionStart={onInteractionStart}
+            onInteractionEnd={onInteractionEnd}
           />
           <NumericControl
             label="Spațiu Între Evenimente"
@@ -489,6 +525,8 @@ export const PosterSettingsPanel = ({
             min={0}
             max={60}
             onChange={(val) => updateField('daySection', 'eventsGap', val)}
+            onInteractionStart={onInteractionStart}
+            onInteractionEnd={onInteractionEnd}
           />
         </div>
       </div>
@@ -505,6 +543,8 @@ export const PosterSettingsPanel = ({
             min={20}
             max={96}
             onChange={(val) => updateField('eventCard', 'emojiSize', val)}
+            onInteractionStart={onInteractionStart}
+            onInteractionEnd={onInteractionEnd}
           />
           <NumericControl
             label="Distanță Emoji - Text"
@@ -512,6 +552,8 @@ export const PosterSettingsPanel = ({
             min={0}
             max={64}
             onChange={(val) => updateField('eventCard', 'gapEmojiToContent', val)}
+            onInteractionStart={onInteractionStart}
+            onInteractionEnd={onInteractionEnd}
           />
           <NumericControl
             label="Distanță Oră - Titlu"
@@ -519,6 +561,8 @@ export const PosterSettingsPanel = ({
             min={0}
             max={40}
             onChange={(val) => updateField('eventCard', 'gapTimeToTitle', val)}
+            onInteractionStart={onInteractionStart}
+            onInteractionEnd={onInteractionEnd}
           />
           <NumericControl
             label="Padding Vertical Eveniment"
@@ -526,6 +570,8 @@ export const PosterSettingsPanel = ({
             min={0}
             max={40}
             onChange={(val) => updateField('eventCard', 'paddingVertical', val)}
+            onInteractionStart={onInteractionStart}
+            onInteractionEnd={onInteractionEnd}
           />
           <NumericControl
             label="Mărime Font Titlu"
@@ -533,6 +579,8 @@ export const PosterSettingsPanel = ({
             min={16}
             max={56}
             onChange={(val) => updateField('eventCard', 'titleFontSize', val)}
+            onInteractionStart={onInteractionStart}
+            onInteractionEnd={onInteractionEnd}
           />
           <NumericControl
             label="Înălțime Linie Titlu (Line Height)"
@@ -540,6 +588,8 @@ export const PosterSettingsPanel = ({
             min={16}
             max={72}
             onChange={(val) => updateField('eventCard', 'titleLineHeight', val)}
+            onInteractionStart={onInteractionStart}
+            onInteractionEnd={onInteractionEnd}
           />
           <NumericControl
             label="Mărime Font Detaliu (Feature)"
@@ -547,6 +597,8 @@ export const PosterSettingsPanel = ({
             min={14}
             max={48}
             onChange={(val) => updateField('eventCard', 'featureFontSize', val)}
+            onInteractionStart={onInteractionStart}
+            onInteractionEnd={onInteractionEnd}
           />
           <NumericControl
             label="Mărime Caracter Separator (/)"
@@ -554,6 +606,8 @@ export const PosterSettingsPanel = ({
             min={14}
             max={48}
             onChange={(val) => updateField('eventCard', 'slashFontSize', val)}
+            onInteractionStart={onInteractionStart}
+            onInteractionEnd={onInteractionEnd}
           />
           <NumericControl
             label="Mărime Font Oră"
@@ -561,6 +615,8 @@ export const PosterSettingsPanel = ({
             min={12}
             max={40}
             onChange={(val) => updateField('eventCard', 'timeFontSize', val)}
+            onInteractionStart={onInteractionStart}
+            onInteractionEnd={onInteractionEnd}
           />
         </div>
       </div>

@@ -38,6 +38,9 @@ export default function App() {
   const [activePageIndex, setActivePageIndex] = useState(0);
   const [mobileView, setMobileView] = useState<MobileView>('editor');
 
+  // Stare pentru Peek Preview pe mobil (activă doar când tragi de slider)
+  const [isPeekingPreview, setIsPeekingPreview] = useState(false);
+
   const [presets, setPresets] = useState<PosterPreset[]>(() => loadStoredPresets());
   const [activePresetId, setActivePresetId] = useState<string>(() => loadStoredActivePresetId());
 
@@ -127,8 +130,8 @@ export default function App() {
 
   const handleDeletePreset = (presetId: string) => {
     setPresets((prev) => prev.filter((p) => p.id !== presetId));
-    setActivePresetId('preset-desktop');
-    const defaultPreset = presets.find((p) => p.id === 'preset-desktop');
+    setActivePresetId('preset-default');
+    const defaultPreset = presets.find((p) => p.id === 'preset-default');
     if (defaultPreset) {
       setSlidesSettings(JSON.parse(JSON.stringify(defaultPreset.settings)));
     }
@@ -203,10 +206,10 @@ export default function App() {
 
   return (
     <div
-      className={`min-h-screen ${UI_THEME.backgrounds.app} ${UI_THEME.text.primary} p-3 sm:p-5 lg:p-8 flex flex-col items-center`}
+      className={`min-h-screen ${UI_THEME.backgrounds.app} ${UI_THEME.text.primary} p-3 sm:p-5 lg:p-8 flex flex-col items-center relative`}
     >
-      {/* Selector Vizualizare Mobil (afișat exclusiv sub ecran xl) */}
-      <div className="xl:hidden w-full max-w-lg mb-4 sticky top-2 z-50">
+      {/* 1. Bară navigare mobil (sub ecran xl) */}
+      <div className="xl:hidden w-full max-w-lg mb-4 sticky top-2 z-40">
         <div className="grid grid-cols-3 gap-1 bg-[#151522]/95 backdrop-blur-md p-1.5 rounded-2xl border border-[#262638] shadow-2xl">
           <button
             type="button"
@@ -249,8 +252,29 @@ export default function App() {
         </div>
       </div>
 
+      {/* 2. HUD PEEK PREVIEW PE MOBIL: Apare instant când tragi de orice slider pe tab-ul Ajustare */}
+      {isPeekingPreview && mobileView === 'settings' && (
+        <div className="xl:hidden fixed top-16 left-0 right-0 z-50 flex justify-center pointer-events-none px-4 animate-in fade-in zoom-in-95 duration-150">
+          <div className="bg-[#12121c]/90 backdrop-blur-xl border border-indigo-500/40 rounded-3xl p-3 shadow-[0_20px_50px_rgba(0,0,0,0.8)] max-w-[280px] w-full flex flex-col items-center">
+            <span className="text-[10px] font-bold text-indigo-300 uppercase tracking-widest mb-1.5">
+              Live Preview
+            </span>
+            <div className="w-full h-[38vh] flex items-center justify-center">
+              {pages[safePageIndex] && (
+                <ScheduleBoard
+                  config={schedule}
+                  page={pages[safePageIndex]}
+                  settings={currentSlideSettings}
+                />
+              )}
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* 3. Conținutul principal */}
       <main className="w-full max-w-[1750px] grid grid-cols-1 xl:grid-cols-12 gap-6 xl:gap-8 items-start">
-        {/* 1. Coloana Editor */}
+        {/* Coloana Editor */}
         <section
           className={`xl:col-span-5 w-full ${UI_THEME.backgrounds.panel} ${UI_THEME.borders.subtle} ${UI_THEME.radii.panel} ${UI_THEME.spacing.panelPadding} shadow-2xl ${
             mobileView === 'editor' ? 'block' : 'hidden xl:block'
@@ -269,7 +293,7 @@ export default function App() {
           />
         </section>
 
-        {/* 2. Coloana Previzualizare Poster */}
+        {/* Coloana Previzualizare Poster */}
         <section
           className={`xl:col-span-4 w-full flex justify-center sticky top-6 ${
             mobileView === 'preview' ? 'block' : 'hidden xl:block'
@@ -289,7 +313,7 @@ export default function App() {
           </div>
         </section>
 
-        {/* 3. Coloana Panou Reglaje Poster */}
+        {/* Coloana Panou Reglaje Poster */}
         <section
           className={`xl:col-span-3 w-full flex justify-center xl:justify-start sticky top-6 ${
             mobileView === 'settings' ? 'block' : 'hidden xl:block'
@@ -309,6 +333,8 @@ export default function App() {
             onDeletePreset={handleDeletePreset}
             onExportPresets={() => exportPresetsToJson(presets)}
             onImportPresets={handleImportPresets}
+            onInteractionStart={() => setIsPeekingPreview(true)}
+            onInteractionEnd={() => setIsPeekingPreview(false)}
           />
         </section>
       </main>
