@@ -1,6 +1,6 @@
 import { AppleEmoji } from '../common/AppleEmoji';
 import { UI_THEME } from '../../constants/uiThemeConfig';
-import { ChevronDown, ChevronUp, Plus, Trash2 } from 'lucide-react';
+import { ChevronDown, ChevronUp, Plus, Trash2, Sparkles } from 'lucide-react';
 import type { DaySchedule, ScheduleEvent } from '../../types/schedule';
 
 interface DayEditorProps {
@@ -47,7 +47,14 @@ export const DayEditor = ({
             </p>
           ) : (
             day.events.map((event) => (
-              <div key={event.id} className="p-3.5 rounded-xl bg-[#1A1A28] border border-[#2B2B3E] flex flex-col gap-3">
+              <div 
+                key={event.id} 
+                className={`p-3.5 rounded-xl border flex flex-col gap-3 transition-colors ${
+                  event.isHighlighted
+                    ? 'bg-[#1e1c32] border-indigo-500/50 shadow-md ring-1 ring-indigo-500/20'
+                    : 'bg-[#1A1A28] border-[#2B2B3E]'
+                }`}
+              >
                 <div className="flex items-center gap-2.5">
                   <button
                     type="button"
@@ -68,8 +75,21 @@ export const DayEditor = ({
 
                   <button
                     type="button"
+                    onClick={() => onUpdateEvent(day.id, event.id, { isHighlighted: !event.isHighlighted })}
+                    className={`p-2 rounded-lg transition-colors cursor-pointer shrink-0 ${
+                      event.isHighlighted
+                        ? 'text-amber-300 bg-amber-400/15 border border-amber-400/30 shadow-xs'
+                        : 'text-neutral-400 hover:text-amber-300 hover:bg-[#202030]'
+                    }`}
+                    title={event.isHighlighted ? 'Elimină evidențierea specială' : 'Marchează ca eveniment special'}
+                  >
+                    <Sparkles className="w-4 h-4" />
+                  </button>
+
+                  <button
+                    type="button"
                     onClick={() => onDeleteEvent(day.id, event.id)}
-                    className="text-neutral-400 hover:text-red-400 p-2 hover:bg-red-500/10 rounded-lg transition-colors cursor-pointer"
+                    className="text-neutral-400 hover:text-red-400 p-2 hover:bg-red-500/10 rounded-lg transition-colors cursor-pointer shrink-0"
                     title="Șterge atelier"
                   >
                     <Trash2 className="w-4 h-4" />

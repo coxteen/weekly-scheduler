@@ -29,7 +29,7 @@ export const DaySection = ({
 
   return (
     <div
-      className="shadow-2xs flex flex-col transition-colors"
+      className="shadow-2xs flex flex-col transition-colors relative"
       style={{
         backgroundColor: cardBackgroundColor || fixed.cardBackgroundColor,
         border: fixed.border,
@@ -37,6 +37,7 @@ export const DaySection = ({
         padding: `${cfg.paddingVertical}px ${cfg.paddingHorizontal}px`,
         color: textColor,
         gap: '8px',
+        overflow: 'visible',
       }}
     >
       <div>
