@@ -9,16 +9,61 @@ const STORAGE_KEYS = {
   ACTIVE_PRESET_ID: 'zborhub_poster_active_preset_id_v1',
 } as const;
 
+// Setări scalate compact pentru ecrane de telefon
+const MOBILE_POSTER_SETTINGS: PosterCustomizableSettings = {
+  layout: {
+    paddingHorizontal: 16,
+    paddingTop: 0,
+    paddingBottom: 20,
+    daysGap: 10,
+  },
+  header: {
+    titleFontSize: 18,
+    titleLetterSpacing: 0.12,
+    periodFontSize: 20,
+    periodLetterSpacing: 0.05,
+  },
+  daySection: {
+    borderRadius: 8,
+    paddingVertical: 5,
+    paddingHorizontal: 8,
+    eventsGap: 4,
+    headerFontSize: 9,
+  },
+  eventCard: {
+    emojiSize: 16,
+    gapEmojiToContent: 6,
+    gapTimeToTitle: 0,
+    titleFontSize: 11,
+    titleLineHeight: 12,
+    featureFontSize: 9,
+    slashFontSize: 9,
+    timeFontSize: 8,
+    paddingVertical: 0,
+  },
+};
+
 export const BUILT_IN_PRESETS: PosterPreset[] = [
   {
-    id: 'preset-default',
-    name: 'Default ZborHub',
+    id: 'preset-desktop',
+    name: 'Desktop',
     isBuiltIn: true,
     updatedAt: new Date().toISOString(),
     settings: {
       0: { ...DEFAULT_POSTER_SETTINGS },
       1: { ...DEFAULT_POSTER_SETTINGS },
       2: { ...DEFAULT_POSTER_SETTINGS },
+    },
+  },
+  {
+    id: 'preset-phone',
+    name: 'Telefon',
+    isBuiltIn: true,
+    updatedAt: new Date().toISOString(),
+    settings: {
+      0: { ...MOBILE_POSTER_SETTINGS },
+      1: { ...MOBILE_POSTER_SETTINGS },
+      2: { ...MOBILE_POSTER_SETTINGS },
     },
   },
 ];
@@ -113,11 +158,10 @@ export function loadStoredPresets(): PosterPreset[] {
     const customPresets: PosterPreset[] = JSON.parse(raw);
     if (!Array.isArray(customPresets)) return BUILT_IN_PRESETS;
 
-    // Fuzionăm doar preset-ul Default ZborHub cu eventualele preset-uri salvate manual de utilizator
     const merged = [...BUILT_IN_PRESETS];
     customPresets.forEach((cp) => {
-      // Ignorăm vechile preset-uri 'preset-compact' și 'preset-airy' dacă au rămas în storage
-      if (cp.id === 'preset-compact' || cp.id === 'preset-airy') return;
+      // Ignorăm vechiul preset default dacă a rămas în cache
+      if (cp.id === 'preset-default') return;
 
       if (!merged.some((p) => p.id === cp.id)) {
         merged.push({
@@ -149,12 +193,12 @@ export function saveStoredPresets(presets: PosterPreset[]): void {
 export function loadStoredActivePresetId(): string {
   try {
     const stored = localStorage.getItem(STORAGE_KEYS.ACTIVE_PRESET_ID);
-    if (!stored || stored === 'preset-compact' || stored === 'preset-airy') {
-      return 'preset-default';
+    if (!stored || stored === 'preset-default') {
+      return 'preset-desktop';
     }
     return stored;
   } catch {
-    return 'preset-default';
+    return 'preset-desktop';
   }
 }
 
