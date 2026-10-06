@@ -1,4 +1,4 @@
-import { useRef, useMemo, useState } from 'react';
+import { useRef, useMemo, useState, useEffect } from 'react';
 import { useScheduleManager } from './hooks/useScheduleManager';
 import { paginateScheduleDays, type SlideCount } from './utils/paginationUtils';
 import { ScheduleBoard } from './components/preview/ScheduleBoard';
@@ -8,6 +8,12 @@ import { PosterSettingsPanel } from './components/settings/PosterSettingsPanel';
 import { DEFAULT_POSTER_SETTINGS } from './constants/posterThemeConfig';
 import type { PosterCustomizableSettings } from './types/posterCustomizer';
 import { UI_THEME } from './constants/uiThemeConfig';
+import {
+  loadStoredSlidesSettings,
+  saveStoredSlidesSettings,
+  loadStoredSlideCount,
+  saveStoredSlideCount,
+} from './utils/storageService';
 
 export default function App() {
   const {
@@ -20,19 +26,24 @@ export default function App() {
     deleteEvent,
   } = useScheduleManager();
 
-  const [slideCount, setSlideCount] = useState<SlideCount>(2);
+  // 1. Inițializare din localStorage (Hydration la pornire)
+  const [slideCount, setSlideCount] = useState<SlideCount>(() => loadStoredSlideCount());
   const [activePageIndex, setActivePageIndex] = useState(0);
 
-  // Stocare setări independente per index de slide
   const [slidesSettings, setSlidesSettings] = useState<
     Record<number, PosterCustomizableSettings>
-  >({
-    0: { ...DEFAULT_POSTER_SETTINGS },
-    1: { ...DEFAULT_POSTER_SETTINGS },
-    2: { ...DEFAULT_POSTER_SETTINGS },
-  });
+  >(() => loadStoredSlidesSettings());
 
   const boardRefs = useRef<(HTMLDivElement | null)[]>([]);
+
+  // 2. Auto-save la orice modificare a setărilor sau a numărului de slide-uri
+  useEffect(() => {
+    saveStoredSlidesSettings(slidesSettings);
+  }, [slidesSettings]);
+
+  useEffect(() => {
+    saveStoredSlideCount(slideCount);
+  }, [slideCount]);
 
   const pages = useMemo(
     () => paginateScheduleDays(schedule.days, slideCount),
