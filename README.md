@@ -1,93 +1,127 @@
 <div align="center">
 
-# Weekly Scheduler
+# ZborHub Weekly Scheduler
 
-**Weekly Scheduler helps teams, educators, and event organizers turn a busy week into a polished, export-ready schedule without manual spreadsheet cleanup**
+**A browser-based weekly planner and poster builder for training programs, workshops, recurring events, and team schedules.**
 
 [![Platform](https://img.shields.io/badge/Platform-Web-4F46E5?style=flat-square&logo=vercel&logoColor=white)](https://vite.dev/)
 [![Framework](https://img.shields.io/badge/React-19-61DAFB?style=flat-square&logo=react&logoColor=white)](https://react.dev/)
 [![Language](https://img.shields.io/badge/TypeScript-5-3178C6?style=flat-square&logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
+[![Build](https://img.shields.io/badge/Build-Vite-646CFF?style=flat-square&logo=vite&logoColor=white)](https://vite.dev/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-green.svg?style=flat-square)](#-license--author)
 
 </div>
 
 <p align="center">
-  <img src="./assets/demo.gif" alt="Weekly Scheduler interactive demo" width="850">
+  <img src="./src/assets/hero.png" alt="Weekly Scheduler interface preview" width="960">
 </p>
 
 ---
 
-## 📌 Problem & Motivation
+## Overview
 
-Planning a week of workshops, sessions, or recurring activities often means juggling calendars, notes, and visual exports across multiple tools. Small changes can ripple through the whole schedule, creating inconsistent timings, missing days, and last-minute formatting issues that slow everyone down.
+ZborHub Weekly Scheduler is a React + TypeScript application that helps you turn a rough weekly plan into a clean, export-ready schedule. The app combines a week planner, event editor, mobile/desktop preview modes, and poster customization tools so the final output can be shared without extra cleanup in spreadsheets or design software.
 
-**Weekly Scheduler** addresses this by streamlining the entire workflow:
+The current build supports:
 
-- **Designs a cleaner planning flow:** It turns a raw weekly plan into a structured schedule you can edit quickly without breaking the layout.
-- **Keeps the visual output polished:** Themes, day selections, and export-ready cards are generated in one place so the final result stays consistent.
-- **Improves planning speed:** One interface lets you adjust dates, toggle active days, and manage events without manual spreadsheet work.
-
----
-
-## ✨ Key Features
-
-- **⚡ Weekly Planning Editor:** Create, update, and remove workshop blocks with a focused scheduling UI designed for fast iteration.
-- **🎨 Theme-Driven Visuals:** Switch between curated color palettes to match the mood or branding of each weekly plan.
-- **🔒 Structured Event Management:** Keep event titles, descriptions, and time slots organized by day with cleaner validation for each entry.
-- **📱 Export-Ready Schedule Board:** Generate a polished preview and export the final layout as a presentation-style visual for sharing or printing.
+- managing a weekly date range and enabled days
+- editing events inline for each day
+- importing schedule data from Excel files
+- styling the board with preset color themes
+- customizing poster layout spacing and typography
+- switching between 2-slide and 3-slide output layouts
+- exporting the selected slide as PNG, JPG, or PDF
+- persisting settings locally in the browser
 
 ---
 
-## 🧠 Architecture & How It Works
+## Current features
 
-```mermaid
-sequenceDiagram
-    autonumber
-    actor User as User / Planner
-    participant UI as Weekly Scheduler UI
-    participant Controller as Schedule Engine
-    participant External as Date + Theme + Export Layer
+### Weekly planning
 
-    User->>UI: Select week start and enable days
-    UI->>Controller: Dispatch schedule updates and event edits
-    Note over Controller: Build date matrix, organize events, update state
-    Controller->>External: Load theme config and export settings
-    External-->>Controller: Day context, palette, render metadata
-    Controller-->>UI: Refresh live board preview
-    UI-->>User: Display an export-ready weekly overview
+- choose the week start date and optional year display
+- generate a structured daily grid for the selected week
+- add, edit, remove, and highlight events per day
+- keep the schedule state stored automatically in `localStorage`
+- reset back to the default mock schedule at any time
+
+### Excel import workflow
+
+- import `.xlsx` schedule data into the current planner
+- parse event rows into the app’s structured weekly model
+- keep import status feedback for success and parsing errors
+- use the imported schedule immediately in the editor and preview
+
+### Poster / export tooling
+
+- switch between multiple theme presets for the schedule board
+- fine-tune poster spacing, typography, day card dimensions, and event card styling
+- save custom preset profiles and update them later
+- export presets as JSON for backup or sharing
+- import preset JSON files back into the app
+- export the active board slide as a downloadable image or PDF
+
+### UX and layout
+
+- desktop and mobile-friendly view switching
+- focused board pagination for multi-slide planning
+- live preview while adjusting poster settings
+- quick access to editor, preview, and poster configuration modes
+
+---
+
+## Tech stack
+
+| Area | Tooling |
+| --- | --- |
+| Frontend | React 19 + TypeScript |
+| Build & dev tooling | Vite |
+| Styling | Tailwind CSS |
+| Date logic | date-fns |
+| Icons | lucide-react |
+| Export / rendering | html2canvas, jsPDF |
+| Excel import | ExcelJS |
+| UI polish | custom poster presets and themed schedule styling |
+
+---
+
+## App structure
+
+```text
+.
+├── src/
+│   ├── App.tsx                     # main app shell and state orchestration
+│   ├── components/
+│   │   ├── editor/                 # date settings, event editing, day management
+│   │   ├── preview/                # slide board rendering and export controls
+│   │   └── settings/               # poster settings and preset manager
+│   ├── constants/                  # default poster settings and UI theme tokens
+│   ├── data/                       # mock schedule data, theme definitions, sample imports
+│   ├── hooks/                      # scheduling logic and persistence hook
+│   ├── types/                      # shared TypeScript models
+│   ├── utils/                      # date helpers, storage utilities, export services, Excel parser
+│   ├── assets/                     # interface images and app assets
+│   ├── main.tsx                   # app entry point
+│   └── index.css                  # global styling
+├── package.json
+├── tsconfig.json
+├── vite.config.ts
+├── README.md
+├── LICENSE
+├── public/
+└── src/data/schedule.xlsx
 ```
 
-## 🛠️ Tech Stack
+---
 
-**Frontend / Client**
-React 19 + TypeScript
-Responsive, state-driven weekly planner UI with reusable editor and preview components.
-
-**Language & Runtime**
-TypeScript 5 / Node.js 20+
-Modern typed development with Vite-based fast iteration and hot module reload.
-
-**State / Architecture**
-Component-driven state management
-Schedule data is composed in-memory, then rendered across editor and preview surfaces without losing consistency.
-
-**APIs & Tooling**
-`date-fns`, `lucide-react`, `Tailwind CSS`, `html2canvas`, `jspdf`
-Utilities for date calculations, layout styling, and export workflows.
-
-**Deployment / Target**
-Web application
-Runs locally in the browser and is designed for quick schedule generation and sharing.
-
-## 🚀 Getting Started
+## Getting started
 
 ### Prerequisites
 
-- **Runtime / SDK:** Node.js 20+
-- **Package Manager / Build Tool:** npm
-- **Browser Access:** A modern browser with local file access for previewing the generated schedule
+- Node.js 20+
+- npm
 
-### 1. Installation
+### Install
 
 ```bash
 git clone https://github.com/coxteen/weekly-scheduler.git
@@ -95,33 +129,33 @@ cd weekly-scheduler
 npm install
 ```
 
-### 2. Environment Configuration
-
-This project does not require external API credentials for local development. The default workflow uses the built-in schedule configuration and theme presets.
-
-### 3. Running Locally / Building
+### Run locally
 
 ```bash
 npm run dev
 ```
 
-Open [`http://localhost:5173`](http://localhost:5173) in your browser to edit and preview the weekly schedule.
+Then open the app in your browser, usually:
 
-## ⚙️ Configuration
-
-Key scheduling and styling settings live in the app source, especially in the schedule model and theme definitions:
-
-```ts
-export const CONFIG = {
-  maxThreshold: 3,
-  debounceDelayMs: 1200,
-  enableDebugLogging: false,
-};
+```text
+http://localhost:5173
 ```
 
-In this project, the main customization points are the weekly date range, enabled days, theme palette, and event cards defined in `src/types/schedule.ts`, `src/data/themes.ts`, and `src/constants/posterThemeConfig.ts`.
+### Production build
 
-## 📄 License & Author
+```bash
+npm run build
+```
 
-- **Author:** [Costin Ghiujan](https://github.com/coxteen)
-- **License:** Released under the [MIT License](LICENSE).
+---
+
+## Current implementation notes
+
+This project is intentionally frontend-only and does not require a backend or external API keys for local use. The app keeps schedule data in browser storage, supports quick iteration, and is designed for fast event planning and presentation-quality output.
+
+---
+
+## License & author
+
+- Author: [Costin Ghiujan](https://github.com/coxteen)
+- License: [MIT](LICENSE)

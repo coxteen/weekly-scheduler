@@ -32,6 +32,9 @@ export default function App() {
     updateEvent,
     addEvent,
     deleteEvent,
+    importFromExcel,
+    importStatus,
+    resetToDefaultSchedule,
   } = useScheduleManager();
 
   const [slideCount, setSlideCount] = useState<SlideCount>(() => loadStoredSlideCount());
@@ -290,6 +293,9 @@ export default function App() {
             onDeleteEvent={deleteEvent}
             paginationControls={paginationControls}
             exportControls={exportControls}
+            onImportExcel={importFromExcel}
+            importStatus={importStatus}
+            onResetSchedule={resetToDefaultSchedule}
           />
         </section>
 

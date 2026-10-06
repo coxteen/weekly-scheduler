@@ -1,56 +1,12 @@
-import * as fs from 'fs';
-import * as path from 'path';
-import { fileURLToPath } from 'url';
 import ExcelJS from 'exceljs';
-import process from 'process';
-
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
-
-// --- Interfețe de date ---
+import type { WeeklyScheduleConfig, DaySchedule, ScheduleEvent } from '../types/schedule';
 
 interface ParsedEvent {
   day: string;
-  dayIndex: number;
   startTime: string;
   endTime: string;
   title: string;
 }
-
-interface ScheduleEvent {
-  id: string;
-  title: string;
-  feature: string;
-  time: string;
-  emoji: string;
-}
-
-interface ScheduleDay {
-  id: string;
-  date: string;
-  dayName: string;
-  dayNumber: number;
-  monthName: string;
-  isEnabled: boolean;
-  events: ScheduleEvent[];
-}
-
-interface ScheduleConfig {
-  title: string;
-  startDate: string;
-  endDate: string;
-  theme: {
-    id: string;
-    name: string;
-    backgroundColor: string;
-    cardBackgroundColor: string;
-    textColor: string;
-    accentColor: string;
-  };
-  days: ScheduleDay[];
-}
-
-// --- Constante de configurare ---
 
 const WEEKDAY_NAMES = [
   'Luni',
@@ -78,8 +34,6 @@ const IGNORED_CONTENT_KEYWORDS = [
   'responsabil',
   'aranjat de sală',
 ];
-
-// --- Funcții Helper ---
 
 function getSafeCellValue(cell: ExcelJS.Cell): string {
   try {
@@ -148,24 +102,23 @@ function normalizeDayName(name: string): string {
     .replace(/[\u0300-\u036f]/g, '');
 }
 
-// --- Extragere Date din Excel ---
-
-async function parseScheduleXlsx(inputFilePath: string): Promise<ParsedEvent[]> {
-  if (!fs.existsSync(inputFilePath)) {
-    throw new Error(`Fișierul Excel nu a fost găsit la: ${inputFilePath}`);
-  }
-
+/**
+ * Încarcă un buffer binar de Excel direct în browser și injectează evenimentele în structura WeeklyScheduleConfig existentă.
+ */
+export async function parseExcelToSchedule(
+  buffer: ArrayBuffer,
+  currentSchedule: WeeklyScheduleConfig
+): Promise<WeeklyScheduleConfig> {
   const workbook = new ExcelJS.Workbook();
-  await workbook.xlsx.readFile(inputFilePath);
+  await workbook.xlsx.load(buffer);
 
   if (workbook.worksheets.length === 0) {
-    throw new Error('Documentul Excel nu conține foi de calcul.');
+    throw new Error('Fișierul Excel nu conține nicio foaie de calcul.');
   }
 
   const worksheet = workbook.worksheets[0];
-  console.log(`📄 Se procesează tab-ul: "${worksheet.name}"...`);
 
-  // 1. Mapare intervale orare din prima coloană
+  // 1. Mapare intervale orare din coloana 1
   const rowTimeMap = new Map<number, { start: string; end: string }>();
   worksheet.eachRow({ includeEmpty: false }, (row, rowNumber) => {
     const rawTime = getSafeCellValue(row.getCell(1));
@@ -202,7 +155,7 @@ async function parseScheduleXlsx(inputFilePath: string): Promise<ParsedEvent[]> 
   const allEvents: ParsedEvent[] = [];
   const processedMergedCells = new Set<string>();
 
-  // 3. Procesare celule comasate (merges)
+  // 3. Extragere merges
   const rawMerges = (worksheet.model as { merges?: string[] })?.merges || [];
   for (const mergeRange of rawMerges) {
     const [startRef, endRef] = mergeRange.split(':');
@@ -237,7 +190,6 @@ async function parseScheduleXlsx(inputFilePath: string): Promise<ParsedEvent[]> 
         const dayName = indexToDayMap.get(dIdx) || WEEKDAY_NAMES[dIdx % WEEKDAY_NAMES.length];
         allEvents.push({
           day: dayName,
-          dayIndex: dIdx,
           startTime,
           endTime,
           title: masterText,
@@ -246,7 +198,6 @@ async function parseScheduleXlsx(inputFilePath: string): Promise<ParsedEvent[]> 
     } else if (startDay) {
       allEvents.push({
         day: startDay.dayName,
-        dayIndex: startDay.dayIndex,
         startTime,
         endTime,
         title: masterText,
@@ -254,7 +205,7 @@ async function parseScheduleXlsx(inputFilePath: string): Promise<ParsedEvent[]> 
     }
   }
 
-  // 4. Procesare celule individuale
+  // 4. Extragere celule simple
   for (const day of dayColumns) {
     let r = 2;
     const maxRow = worksheet.actualRowCount;
@@ -298,7 +249,6 @@ async function parseScheduleXlsx(inputFilePath: string): Promise<ParsedEvent[]> 
       if (startTime && endTime) {
         allEvents.push({
           day: day.dayName,
-          dayIndex: day.dayIndex,
           startTime,
           endTime,
           title: text,
@@ -307,23 +257,9 @@ async function parseScheduleXlsx(inputFilePath: string): Promise<ParsedEvent[]> 
     }
   }
 
-  return allEvents;
-}
-
-function updateScheduleJson(
-  templatePath: string,
-  outputPath: string,
-  events: ParsedEvent[]
-): void {
-  if (!fs.existsSync(templatePath)) {
-    throw new Error(`Fișierul șablon nu a fost găsit la: ${templatePath}`);
-  }
-
-  const rawData = fs.readFileSync(templatePath, 'utf-8');
-  const scheduleConfig: ScheduleConfig = JSON.parse(rawData);
-
+  // 5. Gruparea pe zile și generarea configurației imutabile
   const eventsByDay = new Map<string, ParsedEvent[]>();
-  for (const ev of events) {
+  for (const ev of allEvents) {
     const key = normalizeDayName(ev.day);
     if (!eventsByDay.has(key)) {
       eventsByDay.set(key, []);
@@ -332,8 +268,7 @@ function updateScheduleJson(
   }
 
   let eventCounter = 1;
-
-  scheduleConfig.days = scheduleConfig.days.map((day) => {
+  const updatedDays: DaySchedule[] = currentSchedule.days.map((day) => {
     const key = normalizeDayName(day.dayName);
     const dayEvents = eventsByDay.get(key) || [];
 
@@ -345,6 +280,7 @@ function updateScheduleJson(
       feature: 'alături de...',
       time: `${ev.startTime} - ${ev.endTime}`,
       emoji: '❓',
+      isHighlighted: false,
     }));
 
     return {
@@ -353,20 +289,8 @@ function updateScheduleJson(
     };
   });
 
-  fs.writeFileSync(outputPath, JSON.stringify(scheduleConfig, null, 2), 'utf-8');
-  console.log(`✅ Succes! S-au injectat ${eventCounter - 1} evenimente în: ${outputPath}`);
+  return {
+    ...currentSchedule,
+    days: updatedDays,
+  };
 }
-
-async function main(): Promise<void> {
-  const inputPath = process.argv[2] || path.join(__dirname, 'schedule.xlsx');
-  const templatePath = path.join(__dirname, 'mockSchedule.json');
-  const outputPath = path.join(__dirname, 'schedule.json');
-
-  const events = await parseScheduleXlsx(inputPath);
-  updateScheduleJson(templatePath, outputPath, events);
-}
-
-main().catch((err) => {
-  console.error('❌ Eroare la execuție:', err);
-  process.exit(1);
-});

@@ -4,6 +4,7 @@ import { AppleEmojiPickerModal } from './AppleEmojiPickerModal';
 import { ScheduleSettings } from './ScheduleSettings';
 import { DayEditor } from './DayEditor';
 import type { WeeklyScheduleConfig, ScheduleTheme, ScheduleEvent } from '../../types/schedule';
+import type { ImportStatus } from '../../hooks/useScheduleManager';
 
 interface ScheduleEditorProps {
   schedule: WeeklyScheduleConfig;
@@ -13,6 +14,9 @@ interface ScheduleEditorProps {
   onUpdateEvent: (dayId: string, eventId: string, fields: Partial<ScheduleEvent>) => void;
   onAddEvent: (dayId: string) => void;
   onDeleteEvent: (dayId: string, eventId: string) => void;
+  onImportExcel?: (file: File) => void;
+  onResetSchedule?: () => void;
+  importStatus?: ImportStatus;
   paginationControls?: ReactNode;
   exportControls?: ReactNode;
 }
@@ -25,6 +29,9 @@ export const ScheduleEditor = ({
   onUpdateEvent,
   onAddEvent,
   onDeleteEvent,
+  onImportExcel,
+  onResetSchedule,
+  importStatus,
   paginationControls,
   exportControls,
 }: ScheduleEditorProps) => {
@@ -42,6 +49,9 @@ export const ScheduleEditor = ({
         onStartDateChange={onStartDateChange}
         onIncludeYearChange={onIncludeYearChange}
         onThemeChange={onThemeChange}
+        onImportExcel={onImportExcel}
+        onResetSchedule={onResetSchedule}
+        importStatus={importStatus}
         paginationControls={paginationControls}
         exportControls={exportControls}
       />
