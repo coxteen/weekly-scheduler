@@ -40,7 +40,7 @@ export const DayEditor = ({
       </div>
 
       {isExpanded && (
-        <div className="p-4 pt-1 border-t border-[#222234] flex flex-col gap-3.5">
+        <div className="p-4 border-t border-[#222234] flex flex-col gap-3.5">
           {day.events.length === 0 ? (
             <p className={`text-xs ${UI_THEME.text.muted} italic py-1`}>
               Niciun atelier configurat pentru această zi.
@@ -55,6 +55,7 @@ export const DayEditor = ({
                     : 'bg-[#1A1A28] border-[#2B2B3E]'
                 }`}
               >
+                {/* Rândul 1: Emoji + Titlu + Butoane în dreapta (doar pe PC cu md:flex) */}
                 <div className="flex items-center gap-2.5">
                   <button
                     type="button"
@@ -73,44 +74,77 @@ export const DayEditor = ({
                     className={`flex-1 text-xs md:text-sm font-bold border border-[#2F2F45] ${UI_THEME.radii.control} px-3 py-2 ${UI_THEME.backgrounds.input} ${UI_THEME.text.primary} outline-none ${UI_THEME.backgrounds.inputFocus}`}
                   />
 
-                  <button
-                    type="button"
-                    onClick={() => onUpdateEvent(day.id, event.id, { isHighlighted: !event.isHighlighted })}
-                    className={`p-2 rounded-lg transition-colors cursor-pointer shrink-0 ${
-                      event.isHighlighted
-                        ? 'text-amber-300 bg-amber-400/15 border border-amber-400/30 shadow-xs'
-                        : 'text-neutral-400 hover:text-amber-300 hover:bg-[#202030]'
-                    }`}
-                    title={event.isHighlighted ? 'Elimină evidențierea specială' : 'Marchează ca eveniment special'}
-                  >
-                    <Sparkles className="w-4 h-4" />
-                  </button>
+                  {/* Butoane vizibile exclusiv pe PC (md:flex) */}
+                  <div className="hidden md:flex items-center gap-1.5 shrink-0">
+                    <button
+                      type="button"
+                      onClick={() => onUpdateEvent(day.id, event.id, { isHighlighted: !event.isHighlighted })}
+                      className={`p-2 rounded-lg transition-colors cursor-pointer ${
+                        event.isHighlighted
+                          ? 'text-amber-300 bg-amber-400/15 border border-amber-400/30 shadow-xs'
+                          : 'text-neutral-400 hover:text-amber-300 hover:bg-[#202030]'
+                      }`}
+                      title={event.isHighlighted ? 'Elimină evidențierea specială' : 'Marchează ca eveniment special'}
+                    >
+                      <Sparkles className="w-4 h-4" />
+                    </button>
 
-                  <button
-                    type="button"
-                    onClick={() => onDeleteEvent(day.id, event.id)}
-                    className="text-neutral-400 hover:text-red-400 p-2 hover:bg-red-500/10 rounded-lg transition-colors cursor-pointer shrink-0"
-                    title="Șterge atelier"
-                  >
-                    <Trash2 className="w-4 h-4" />
-                  </button>
+                    <button
+                      type="button"
+                      onClick={() => onDeleteEvent(day.id, event.id)}
+                      className="text-neutral-400 hover:text-red-400 p-2 hover:bg-red-500/10 rounded-lg transition-colors cursor-pointer"
+                      title="Șterge atelier"
+                    >
+                      <Trash2 className="w-4 h-4" />
+                    </button>
+                  </div>
                 </div>
 
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
-                  <input
-                    type="text"
-                    value={event.feature || ''}
-                    placeholder="Subtitlu / Gazdă"
-                    onChange={(e) => onUpdateEvent(day.id, event.id, { feature: e.target.value })}
-                    className={`text-xs italic border border-[#2F2F45] ${UI_THEME.radii.control} px-3 py-2 ${UI_THEME.backgrounds.input} ${UI_THEME.text.primary} outline-none ${UI_THEME.backgrounds.inputFocus}`}
-                  />
-                  <input
-                    type="text"
-                    value={event.time || ''}
-                    placeholder="Interval orar (ex: 18:00 - 20:00)"
-                    onChange={(e) => onUpdateEvent(day.id, event.id, { time: e.target.value })}
-                    className={`text-xs border border-[#2F2F45] ${UI_THEME.radii.control} px-3 py-2 ${UI_THEME.backgrounds.input} ${UI_THEME.text.primary} outline-none ${UI_THEME.backgrounds.inputFocus}`}
-                  />
+                {/* Rândul 2: Feature & Oră (cu butoanele în stânga doar pe mobil) */}
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-2.5">
+                  {/* Grup 1: Buton Highlight în stânga doar pe mobil (md:hidden) + Feature */}
+                  <div className="flex items-center gap-2 w-full">
+                    <button
+                      type="button"
+                      onClick={() => onUpdateEvent(day.id, event.id, { isHighlighted: !event.isHighlighted })}
+                      className={`md:hidden h-9 w-9 flex items-center justify-center rounded-xl border transition-colors cursor-pointer shrink-0 ${
+                        event.isHighlighted
+                          ? 'text-amber-300 bg-amber-400/15 border-amber-400/30 shadow-xs'
+                          : 'text-neutral-400 bg-[#202030] border-[#2F2F45] hover:text-amber-300 hover:bg-[#28283e]'
+                      }`}
+                      title={event.isHighlighted ? 'Elimină evidențierea specială' : 'Marchează ca eveniment special'}
+                    >
+                      <Sparkles className="w-4 h-4" />
+                    </button>
+
+                    <input
+                      type="text"
+                      value={event.feature || ''}
+                      placeholder="Subtitlu / Gazdă"
+                      onChange={(e) => onUpdateEvent(day.id, event.id, { feature: e.target.value })}
+                      className={`flex-1 text-xs italic border border-[#2F2F45] ${UI_THEME.radii.control} px-3 py-2 ${UI_THEME.backgrounds.input} ${UI_THEME.text.primary} outline-none ${UI_THEME.backgrounds.inputFocus}`}
+                    />
+                  </div>
+
+                  {/* Grup 2: Buton Delete în stânga doar pe mobil (md:hidden) + Oră */}
+                  <div className="flex items-center gap-2 w-full">
+                    <button
+                      type="button"
+                      onClick={() => onDeleteEvent(day.id, event.id)}
+                      className="md:hidden h-9 w-9 flex items-center justify-center rounded-xl border border-[#2F2F45] bg-[#202030] text-neutral-400 hover:text-red-400 hover:bg-red-500/10 hover:border-red-500/30 transition-colors cursor-pointer shrink-0"
+                      title="Șterge atelier"
+                    >
+                      <Trash2 className="w-4 h-4" />
+                    </button>
+
+                    <input
+                      type="text"
+                      value={event.time || ''}
+                      placeholder="Interval orar (ex: 18:00 - 20:00)"
+                      onChange={(e) => onUpdateEvent(day.id, event.id, { time: e.target.value })}
+                      className={`flex-1 text-xs border border-[#2F2F45] ${UI_THEME.radii.control} px-3 py-2 ${UI_THEME.backgrounds.input} ${UI_THEME.text.primary} outline-none ${UI_THEME.backgrounds.inputFocus}`}
+                    />
+                  </div>
                 </div>
               </div>
             ))
