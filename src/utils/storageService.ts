@@ -45,25 +45,14 @@ const MOBILE_POSTER_SETTINGS: PosterCustomizableSettings = {
 
 export const BUILT_IN_PRESETS: PosterPreset[] = [
   {
-    id: 'preset-desktop',
-    name: 'Desktop',
+    id: 'preset-default',
+    name: 'Default ZborHub',
     isBuiltIn: true,
     updatedAt: new Date().toISOString(),
     settings: {
       0: { ...DEFAULT_POSTER_SETTINGS },
       1: { ...DEFAULT_POSTER_SETTINGS },
       2: { ...DEFAULT_POSTER_SETTINGS },
-    },
-  },
-  {
-    id: 'preset-phone',
-    name: 'Telefon',
-    isBuiltIn: true,
-    updatedAt: new Date().toISOString(),
-    settings: {
-      0: { ...MOBILE_POSTER_SETTINGS },
-      1: { ...MOBILE_POSTER_SETTINGS },
-      2: { ...MOBILE_POSTER_SETTINGS },
     },
   },
 ];
@@ -193,12 +182,12 @@ export function saveStoredPresets(presets: PosterPreset[]): void {
 export function loadStoredActivePresetId(): string {
   try {
     const stored = localStorage.getItem(STORAGE_KEYS.ACTIVE_PRESET_ID);
-    if (!stored || stored === 'preset-default') {
-      return 'preset-desktop';
+    if (!stored || stored === 'preset-desktop' || stored === 'preset-phone') {
+      return 'preset-default';
     }
     return stored;
   } catch {
-    return 'preset-desktop';
+    return 'preset-default';
   }
 }
 

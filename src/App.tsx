@@ -8,6 +8,7 @@ import { PosterSettingsPanel } from './components/settings/PosterSettingsPanel';
 import { DEFAULT_POSTER_SETTINGS } from './constants/posterThemeConfig';
 import type { PosterCustomizableSettings, PosterPreset } from './types/posterCustomizer';
 import { UI_THEME } from './constants/uiThemeConfig';
+import { PenTool, Eye, Sliders } from 'lucide-react';
 import {
   loadStoredSlidesSettings,
   saveStoredSlidesSettings,
@@ -19,6 +20,8 @@ import {
   saveStoredActivePresetId,
   exportPresetsToJson,
 } from './utils/storageService';
+
+type MobileView = 'editor' | 'preview' | 'settings';
 
 export default function App() {
   const {
@@ -33,34 +36,29 @@ export default function App() {
 
   const [slideCount, setSlideCount] = useState<SlideCount>(() => loadStoredSlideCount());
   const [activePageIndex, setActivePageIndex] = useState(0);
+  const [mobileView, setMobileView] = useState<MobileView>('editor');
 
-  // Preseturi și ID preset activ
   const [presets, setPresets] = useState<PosterPreset[]>(() => loadStoredPresets());
   const [activePresetId, setActivePresetId] = useState<string>(() => loadStoredActivePresetId());
 
-  // Setări slide-uri curente
   const [slidesSettings, setSlidesSettings] = useState<Record<number, PosterCustomizableSettings>>(() => {
     return loadStoredSlidesSettings();
   });
 
   const boardRefs = useRef<(HTMLDivElement | null)[]>([]);
 
-  // Auto-save setări slide-uri
   useEffect(() => {
     saveStoredSlidesSettings(slidesSettings);
   }, [slidesSettings]);
 
-  // Auto-save număr slide-uri
   useEffect(() => {
     saveStoredSlideCount(slideCount);
   }, [slideCount]);
 
-  // Auto-save preset-uri
   useEffect(() => {
     saveStoredPresets(presets);
   }, [presets]);
 
-  // Auto-save active preset id
   useEffect(() => {
     saveStoredActivePresetId(activePresetId);
   }, [activePresetId]);
@@ -91,7 +89,6 @@ export default function App() {
     }));
   };
 
-  // --- Handlere Preset-uri ---
   const handleSelectPreset = (presetId: string) => {
     const selected = presets.find((p) => p.id === presetId);
     if (!selected) return;
@@ -130,8 +127,8 @@ export default function App() {
 
   const handleDeletePreset = (presetId: string) => {
     setPresets((prev) => prev.filter((p) => p.id !== presetId));
-    setActivePresetId('preset-default');
-    const defaultPreset = presets.find((p) => p.id === 'preset-default');
+    setActivePresetId('preset-desktop');
+    const defaultPreset = presets.find((p) => p.id === 'preset-desktop');
     if (defaultPreset) {
       setSlidesSettings(JSON.parse(JSON.stringify(defaultPreset.settings)));
     }
@@ -151,7 +148,6 @@ export default function App() {
 
   const paginationControls = (
     <div className="flex flex-col justify-between h-full gap-2.5">
-      {/* Selector mod slide-uri (2 sau 3) */}
       <div className="grid grid-cols-2 gap-1 bg-[#101018] p-1 rounded-xl border border-[#222234]">
         {([2, 3] as SlideCount[]).map((count) => {
           const isSelected = slideCount === count;
@@ -175,7 +171,6 @@ export default function App() {
         })}
       </div>
 
-      {/* Selector slide curent: doar 1, 2, 3 */}
       <div className="flex bg-[#101018] border border-[#222234] rounded-xl p-1 gap-1">
         {pages.map((p, idx) => {
           const isSelected = safePageIndex === idx;
@@ -208,12 +203,58 @@ export default function App() {
 
   return (
     <div
-      className={`min-h-screen ${UI_THEME.backgrounds.app} ${UI_THEME.text.primary} p-4 md:p-6 lg:p-8 flex justify-center`}
+      className={`min-h-screen ${UI_THEME.backgrounds.app} ${UI_THEME.text.primary} p-3 sm:p-5 lg:p-8 flex flex-col items-center`}
     >
+      {/* Selector Vizualizare Mobil (afișat exclusiv sub ecran xl) */}
+      <div className="xl:hidden w-full max-w-lg mb-4 sticky top-2 z-50">
+        <div className="grid grid-cols-3 gap-1 bg-[#151522]/95 backdrop-blur-md p-1.5 rounded-2xl border border-[#262638] shadow-2xl">
+          <button
+            type="button"
+            onClick={() => setMobileView('editor')}
+            className={`flex items-center justify-center gap-1.5 py-2.5 rounded-xl text-xs font-bold transition-all cursor-pointer ${
+              mobileView === 'editor'
+                ? 'bg-indigo-600 text-white shadow-md'
+                : 'text-neutral-400 hover:text-white'
+            }`}
+          >
+            <PenTool className="w-3.5 h-3.5" />
+            <span>Editor</span>
+          </button>
+
+          <button
+            type="button"
+            onClick={() => setMobileView('preview')}
+            className={`flex items-center justify-center gap-1.5 py-2.5 rounded-xl text-xs font-bold transition-all cursor-pointer ${
+              mobileView === 'preview'
+                ? 'bg-indigo-600 text-white shadow-md'
+                : 'text-neutral-400 hover:text-white'
+            }`}
+          >
+            <Eye className="w-3.5 h-3.5" />
+            <span>Previzualizare</span>
+          </button>
+
+          <button
+            type="button"
+            onClick={() => setMobileView('settings')}
+            className={`flex items-center justify-center gap-1.5 py-2.5 rounded-xl text-xs font-bold transition-all cursor-pointer ${
+              mobileView === 'settings'
+                ? 'bg-indigo-600 text-white shadow-md'
+                : 'text-neutral-400 hover:text-white'
+            }`}
+          >
+            <Sliders className="w-3.5 h-3.5" />
+            <span>Ajustare</span>
+          </button>
+        </div>
+      </div>
+
       <main className="w-full max-w-[1750px] grid grid-cols-1 xl:grid-cols-12 gap-6 xl:gap-8 items-start">
-        {/* Editor coloana stanga */}
+        {/* 1. Coloana Editor */}
         <section
-          className={`xl:col-span-5 w-full ${UI_THEME.backgrounds.panel} ${UI_THEME.borders.subtle} ${UI_THEME.radii.panel} ${UI_THEME.spacing.panelPadding} shadow-2xl`}
+          className={`xl:col-span-5 w-full ${UI_THEME.backgrounds.panel} ${UI_THEME.borders.subtle} ${UI_THEME.radii.panel} ${UI_THEME.spacing.panelPadding} shadow-2xl ${
+            mobileView === 'editor' ? 'block' : 'hidden xl:block'
+          }`}
         >
           <ScheduleEditor
             schedule={schedule}
@@ -228,9 +269,13 @@ export default function App() {
           />
         </section>
 
-        {/* Preview coloana centru */}
-        <section className="xl:col-span-4 w-full flex justify-center sticky top-6">
-          <div className="w-full flex justify-center">
+        {/* 2. Coloana Previzualizare Poster */}
+        <section
+          className={`xl:col-span-4 w-full flex justify-center sticky top-6 ${
+            mobileView === 'preview' ? 'block' : 'hidden xl:block'
+          }`}
+        >
+          <div className="w-full flex flex-col items-center gap-4">
             {pages[safePageIndex] && (
               <ScheduleBoard
                 ref={(el) => {
@@ -244,8 +289,12 @@ export default function App() {
           </div>
         </section>
 
-        {/* Panou setari poster coloana dreapta */}
-        <section className="xl:col-span-3 w-full flex justify-center xl:justify-start sticky top-6">
+        {/* 3. Coloana Panou Reglaje Poster */}
+        <section
+          className={`xl:col-span-3 w-full flex justify-center xl:justify-start sticky top-6 ${
+            mobileView === 'settings' ? 'block' : 'hidden xl:block'
+          }`}
+        >
           <PosterSettingsPanel
             settings={currentSlideSettings}
             onChange={handleUpdateCurrentSlideSettings}

@@ -380,29 +380,29 @@ export const PosterSettingsPanel = ({
           <NumericControl
             label="Margine Orizontală (Sides)"
             value={settings.layout.paddingHorizontal}
-            min={0}
-            max={80}
+            min={10}
+            max={200}
             onChange={(val) => updateField('layout', 'paddingHorizontal', val)}
           />
           <NumericControl
             label="Margine Sus (Padding Top)"
             value={settings.layout.paddingTop}
             min={0}
-            max={120}
+            max={200}
             onChange={(val) => updateField('layout', 'paddingTop', val)}
           />
           <NumericControl
             label="Margine Jos (Padding Bottom)"
             value={settings.layout.paddingBottom}
-            min={0}
-            max={120}
+            min={10}
+            max={250}
             onChange={(val) => updateField('layout', 'paddingBottom', val)}
           />
           <NumericControl
             label="Spațiu Între Zile (Days Gap)"
             value={settings.layout.daysGap}
             min={0}
-            max={60}
+            max={120}
             onChange={(val) => updateField('layout', 'daysGap', val)}
           />
         </div>
@@ -417,8 +417,8 @@ export const PosterSettingsPanel = ({
           <NumericControl
             label="Mărime Titlu (PROGRAM)"
             value={settings.header.titleFontSize}
-            min={12}
-            max={36}
+            min={24}
+            max={100}
             onChange={(val) => updateField('header', 'titleFontSize', val)}
           />
           <NumericControl
@@ -433,8 +433,8 @@ export const PosterSettingsPanel = ({
           <NumericControl
             label="Mărime Perioadă / Dată"
             value={settings.header.periodFontSize}
-            min={18}
-            max={56}
+            min={30}
+            max={120}
             onChange={(val) => updateField('header', 'periodFontSize', val)}
           />
           <NumericControl
@@ -459,35 +459,35 @@ export const PosterSettingsPanel = ({
             label="Rotunjire Colțuri (Radius)"
             value={settings.daySection.borderRadius}
             min={0}
-            max={32}
+            max={64}
             onChange={(val) => updateField('daySection', 'borderRadius', val)}
           />
           <NumericControl
             label="Padding Vertical (Sus/Jos)"
             value={settings.daySection.paddingVertical}
             min={0}
-            max={40}
+            max={80}
             onChange={(val) => updateField('daySection', 'paddingVertical', val)}
           />
           <NumericControl
             label="Padding Orizontal (Stânga/Dreapta)"
             value={settings.daySection.paddingHorizontal}
             min={0}
-            max={40}
+            max={80}
             onChange={(val) => updateField('daySection', 'paddingHorizontal', val)}
           />
           <NumericControl
             label="Mărime Text Nume Zi"
             value={settings.daySection.headerFontSize}
-            min={8}
-            max={24}
+            min={14}
+            max={48}
             onChange={(val) => updateField('daySection', 'headerFontSize', val)}
           />
           <NumericControl
             label="Spațiu Între Evenimente"
             value={settings.daySection.eventsGap}
             min={0}
-            max={30}
+            max={60}
             onChange={(val) => updateField('daySection', 'eventsGap', val)}
           />
         </div>
@@ -502,64 +502,64 @@ export const PosterSettingsPanel = ({
           <NumericControl
             label="Mărime Emoji"
             value={settings.eventCard.emojiSize}
-            min={12}
-            max={48}
+            min={20}
+            max={96}
             onChange={(val) => updateField('eventCard', 'emojiSize', val)}
           />
           <NumericControl
             label="Distanță Emoji - Text"
             value={settings.eventCard.gapEmojiToContent}
             min={0}
-            max={32}
+            max={64}
             onChange={(val) => updateField('eventCard', 'gapEmojiToContent', val)}
           />
           <NumericControl
             label="Distanță Oră - Titlu"
             value={settings.eventCard.gapTimeToTitle}
             min={0}
-            max={20}
+            max={40}
             onChange={(val) => updateField('eventCard', 'gapTimeToTitle', val)}
           />
           <NumericControl
             label="Padding Vertical Eveniment"
             value={settings.eventCard.paddingVertical}
             min={0}
-            max={20}
+            max={40}
             onChange={(val) => updateField('eventCard', 'paddingVertical', val)}
           />
           <NumericControl
             label="Mărime Font Titlu"
             value={settings.eventCard.titleFontSize}
-            min={10}
-            max={24}
+            min={16}
+            max={56}
             onChange={(val) => updateField('eventCard', 'titleFontSize', val)}
           />
           <NumericControl
             label="Înălțime Linie Titlu (Line Height)"
             value={settings.eventCard.titleLineHeight}
-            min={10}
-            max={36}
+            min={16}
+            max={72}
             onChange={(val) => updateField('eventCard', 'titleLineHeight', val)}
           />
           <NumericControl
             label="Mărime Font Detaliu (Feature)"
             value={settings.eventCard.featureFontSize}
-            min={8}
-            max={20}
+            min={14}
+            max={48}
             onChange={(val) => updateField('eventCard', 'featureFontSize', val)}
           />
           <NumericControl
             label="Mărime Caracter Separator (/)"
             value={settings.eventCard.slashFontSize}
-            min={8}
-            max={20}
+            min={14}
+            max={48}
             onChange={(val) => updateField('eventCard', 'slashFontSize', val)}
           />
           <NumericControl
             label="Mărime Font Oră"
             value={settings.eventCard.timeFontSize}
-            min={8}
-            max={18}
+            min={12}
+            max={40}
             onChange={(val) => updateField('eventCard', 'timeFontSize', val)}
           />
         </div>
