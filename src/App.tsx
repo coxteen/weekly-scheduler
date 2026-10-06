@@ -209,7 +209,7 @@ export default function App() {
 
   return (
     <div
-      className={`min-h-screen ${UI_THEME.backgrounds.app} ${UI_THEME.text.primary} p-3 sm:p-5 lg:p-8 flex flex-col items-center relative`}
+      className={`min-h-screen xl:h-screen xl:max-h-screen xl:overflow-hidden ${UI_THEME.backgrounds.app} ${UI_THEME.text.primary} p-3 sm:p-4 lg:p-6 flex flex-col items-center justify-center relative`}
     >
       {/* 1. Bară navigare mobil (sub ecran xl) */}
       <div className="xl:hidden w-full max-w-lg mb-4 sticky top-2 z-40">
@@ -255,7 +255,7 @@ export default function App() {
         </div>
       </div>
 
-      {/* 2. HUD PEEK PREVIEW PE MOBIL: Apare instant când tragi de orice slider pe tab-ul Ajustare */}
+      {/* 2. HUD PEEK PREVIEW PE MOBIL */}
       {isPeekingPreview && mobileView === 'settings' && (
         <div className="xl:hidden fixed top-16 left-0 right-0 z-50 flex justify-center pointer-events-none px-4 animate-in fade-in zoom-in-95 duration-150">
           <div className="bg-[#12121c]/90 backdrop-blur-xl border border-indigo-500/40 rounded-3xl p-3 shadow-[0_20px_50px_rgba(0,0,0,0.8)] max-w-[280px] w-full flex flex-col items-center">
@@ -275,37 +275,40 @@ export default function App() {
         </div>
       )}
 
-      {/* 3. Conținutul principal */}
-      <main className="w-full max-w-[1750px] grid grid-cols-1 xl:grid-cols-12 gap-6 xl:gap-8 items-start">
-        {/* Coloana Editor */}
+      {/* 3. Conținutul principal ancorat la înălțimea viewport-ului pe desktop */}
+      <main className="w-full max-w-[1850px] flex-1 xl:h-[calc(100vh-3.5rem)] xl:max-h-[calc(100vh-3.5rem)] grid grid-cols-1 xl:grid-cols-12 gap-4 xl:gap-6 items-stretch min-h-0">
+        
+        {/* COLOANA 1: Editor (Stânga - 5 cols) */}
         <section
-          className={`xl:col-span-5 w-full ${UI_THEME.backgrounds.panel} ${UI_THEME.borders.subtle} ${UI_THEME.radii.panel} ${UI_THEME.spacing.panelPadding} shadow-2xl ${
-            mobileView === 'editor' ? 'block' : 'hidden xl:block'
+          className={`xl:col-span-5 w-full xl:h-full xl:min-h-0 ${UI_THEME.backgrounds.panel} ${UI_THEME.borders.subtle} ${UI_THEME.radii.panel} ${UI_THEME.spacing.panelPadding} shadow-2xl flex flex-col overflow-hidden ${
+            mobileView === 'editor' ? 'flex' : 'hidden xl:flex'
           }`}
         >
-          <ScheduleEditor
-            schedule={schedule}
-            onStartDateChange={handleStartDateChange}
-            onIncludeYearChange={handleIncludeYearToggle}
-            onThemeChange={handleThemeChange}
-            onUpdateEvent={updateEvent}
-            onAddEvent={addEvent}
-            onDeleteEvent={deleteEvent}
-            paginationControls={paginationControls}
-            exportControls={exportControls}
-            onImportExcel={importFromExcel}
-            importStatus={importStatus}
-            onResetSchedule={resetToDefaultSchedule}
-          />
+          <div className="w-full flex-1 overflow-y-auto min-h-0 pr-1.5 scrollbar-thin scrollbar-thumb-[#28283c] scrollbar-track-transparent">
+            <ScheduleEditor
+              schedule={schedule}
+              onStartDateChange={handleStartDateChange}
+              onIncludeYearChange={handleIncludeYearToggle}
+              onThemeChange={handleThemeChange}
+              onUpdateEvent={updateEvent}
+              onAddEvent={addEvent}
+              onDeleteEvent={deleteEvent}
+              paginationControls={paginationControls}
+              exportControls={exportControls}
+              onImportExcel={importFromExcel}
+              importStatus={importStatus}
+              onResetSchedule={resetToDefaultSchedule}
+            />
+          </div>
         </section>
 
-        {/* Coloana Previzualizare Poster */}
+        {/* COLOANA 2: Previzualizare Poster - Direct pe canvas, fără card exterior */}
         <section
-          className={`xl:col-span-4 w-full flex justify-center sticky top-6 ${
-            mobileView === 'preview' ? 'block' : 'hidden xl:block'
+          className={`xl:col-span-4 w-full xl:h-full xl:min-h-0 flex flex-col items-center justify-center overflow-hidden ${
+            mobileView === 'preview' ? 'flex' : 'hidden xl:flex'
           }`}
         >
-          <div className="w-full flex flex-col items-center gap-4">
+          <div className="w-full h-full flex-1 min-h-0 flex items-center justify-center relative">
             {pages[safePageIndex] && (
               <ScheduleBoard
                 ref={(el) => {
@@ -319,30 +322,34 @@ export default function App() {
           </div>
         </section>
 
-        {/* Coloana Panou Reglaje Poster */}
+        {/* COLOANA 3: Panou Reglaje Poster (Dreapta) */}
         <section
-          className={`xl:col-span-3 w-full flex justify-center xl:justify-start sticky top-6 ${
-            mobileView === 'settings' ? 'block' : 'hidden xl:block'
+          className={`xl:col-span-3 w-full xl:h-full xl:min-h-0 ${UI_THEME.backgrounds.panel} ${UI_THEME.borders.subtle} ${UI_THEME.radii.panel} ${UI_THEME.spacing.panelPadding} shadow-2xl flex flex-col overflow-hidden ${
+            mobileView === 'settings' ? 'flex' : 'hidden xl:flex'
           }`}
         >
-          <PosterSettingsPanel
-            settings={currentSlideSettings}
-            onChange={handleUpdateCurrentSlideSettings}
-            activePageIndex={safePageIndex}
-            totalPages={pages.length}
-            onCopySettingsToSlide={handleCopySettingsToSlide}
-            presets={presets}
-            activePresetId={activePresetId}
-            onSelectPreset={handleSelectPreset}
-            onSaveNewPreset={handleSaveNewPreset}
-            onUpdateActivePreset={handleUpdateActivePreset}
-            onDeletePreset={handleDeletePreset}
-            onExportPresets={() => exportPresetsToJson(presets)}
-            onImportPresets={handleImportPresets}
-            onInteractionStart={() => setIsPeekingPreview(true)}
-            onInteractionEnd={() => setIsPeekingPreview(false)}
-          />
+          {/* Scroll intern pentru setări */}
+          <div className="w-full flex-1 overflow-y-auto min-h-0 pr-1.5 scrollbar-thin scrollbar-thumb-[#28283c] scrollbar-track-transparent">
+            <PosterSettingsPanel
+              settings={currentSlideSettings}
+              onChange={handleUpdateCurrentSlideSettings}
+              activePageIndex={safePageIndex}
+              totalPages={pages.length}
+              onCopySettingsToSlide={handleCopySettingsToSlide}
+              presets={presets}
+              activePresetId={activePresetId}
+              onSelectPreset={handleSelectPreset}
+              onSaveNewPreset={handleSaveNewPreset}
+              onUpdateActivePreset={handleUpdateActivePreset}
+              onDeletePreset={handleDeletePreset}
+              onExportPresets={() => exportPresetsToJson(presets)}
+              onImportPresets={handleImportPresets}
+              onInteractionStart={() => setIsPeekingPreview(true)}
+              onInteractionEnd={() => setIsPeekingPreview(false)}
+            />
+          </div>
         </section>
+
       </main>
     </div>
   );

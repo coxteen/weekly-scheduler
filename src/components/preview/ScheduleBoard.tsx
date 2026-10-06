@@ -29,13 +29,15 @@ export const ScheduleBoard = forwardRef<HTMLDivElement, ScheduleBoardProps>(
     const { layout: fixedLayout } = POSTER_FIXED_CONFIG;
     const { layout, header } = settings;
 
-    // Recalculează automat scara pe baza raportului disponibil, indiferent de rezoluție
+    // Recalculează automat scara pe baza spațiului efectiv ocupat de containerul părinte
     useLayoutEffect(() => {
       const updateScale = () => {
         if (!containerRef.current) return;
         const { clientWidth, clientHeight } = containerRef.current;
 
-        // Raport de scalare uniform care încape perfect în spațiu
+        if (clientWidth === 0 || clientHeight === 0) return;
+
+        // Raport de scalare uniform care umple la maximum spațiul fără deformare
         const scaleX = clientWidth / VIRTUAL_WIDTH;
         const scaleY = clientHeight / VIRTUAL_HEIGHT;
         const optimalScale = Math.min(scaleX, scaleY);
@@ -60,20 +62,20 @@ export const ScheduleBoard = forwardRef<HTMLDivElement, ScheduleBoardProps>(
     }, []);
 
     return (
-      // 1. Container exterior flexibil: ocupă înălțimea disponibilă din viewport și menține proporția
+      // 1. Container exterior: umple complet înălțimea și lățimea coloanei din App.tsx
       <div
         ref={containerRef}
-        className="w-full h-[70vh] md:h-[82vh] flex items-center justify-center overflow-hidden relative"
+        className="w-full h-full min-h-[60vh] xl:min-h-0 flex-1 flex items-center justify-center overflow-hidden relative p-0"
       >
-        {/* 2. Wrapper scalat care își păstrează bounding-box-ul exact în fluxul DOM */}
+        {/* 2. Wrapper dimensionat dinamic la pixelul exact al posterului scalat */}
         <div
           style={{
             width: `${VIRTUAL_WIDTH * scale}px`,
             height: `${VIRTUAL_HEIGHT * scale}px`,
           }}
-          className="relative shrink-0 shadow-2xl flex items-center justify-center"
+          className="relative shrink-0 shadow-2xl flex items-center justify-center transition-all duration-75"
         >
-          {/* 3. Canvasul intern fix 1080x1920: scalează unitar din colțul stânga-sus */}
+          {/* 3. Canvasul intern fix 1080x1920: scalează unitar din stânga-sus */}
           <div
             ref={ref}
             data-page-number={page.pageNumber}
