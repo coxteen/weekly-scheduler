@@ -4,7 +4,6 @@ import {
   exportSingleElementToJpg,
   exportSingleElementToPdf,
 } from '../../utils/exportService';
-import { UI_THEME } from '../../constants/uiThemeConfig';
 import { Download, FileImage, Image as ImageIcon, FileText, Loader2 } from 'lucide-react';
 
 type ExportFormat = 'png' | 'jpg' | 'pdf';
@@ -54,44 +53,45 @@ export const ExportToolbar = ({
   };
 
   return (
-    <div
-      className={`w-full ${UI_THEME.backgrounds.panel} ${UI_THEME.borders.subtle} ${UI_THEME.radii.card} ${UI_THEME.spacing.cardPadding} shadow-xl flex flex-col gap-3.5`}
-    >
-      <div className="flex flex-col gap-1.5">
-        <div className="grid grid-cols-3 gap-1.5 bg-[#171724] p-1 rounded-xl border border-[#262638]">
-          {FORMATS.map(({ id, label, Icon }) => (
+    <div className="flex flex-col justify-between h-full gap-3">
+      {/* Selector format */}
+      <div className="grid grid-cols-3 gap-1 bg-[#101018] p-1 rounded-xl border border-[#222234]">
+        {FORMATS.map(({ id, label, Icon }) => {
+          const isSelected = selectedFormat === id;
+          return (
             <button
               key={id}
               type="button"
               onClick={() => setSelectedFormat(id as ExportFormat)}
-              className={`flex flex-col items-center justify-center py-2 px-1 rounded-lg text-xs font-semibold transition-all cursor-pointer ${
-                selectedFormat === id
-                  ? 'bg-white text-neutral-950 font-bold shadow-md'
-                  : 'text-neutral-400 hover:text-neutral-200'
+              className={`flex items-center justify-center gap-1.5 py-2 px-1 rounded-lg text-xs font-semibold transition-all cursor-pointer ${
+                isSelected
+                  ? 'bg-neutral-100 text-neutral-950 font-bold shadow-sm'
+                  : 'text-neutral-400 hover:text-white hover:bg-[#1a1a28]'
               }`}
             >
-              <Icon className="w-4 h-4 mb-1" />
+              <Icon className="w-3.5 h-3.5" />
               <span>{label}</span>
             </button>
-          ))}
-        </div>
+          );
+        })}
       </div>
 
+      {/* Buton descărcare */}
       <button
         type="button"
         disabled={isExporting}
         onClick={handleExecuteExport}
-        className={`w-full flex items-center justify-center gap-2 py-2.5 px-4 ${UI_THEME.radii.control} text-xs font-bold ${UI_THEME.backgrounds.buttonAccent} hover:opacity-90 disabled:opacity-50 transition-all cursor-pointer shadow-md`}
+        className="w-full flex items-center justify-center gap-2 py-2.5 px-3 rounded-xl text-xs font-bold bg-indigo-600 hover:bg-indigo-500 text-white disabled:opacity-50 transition-all cursor-pointer shadow-md shadow-indigo-600/20 active:scale-[0.98]"
       >
         {isExporting ? (
           <>
-            <Loader2 className="w-4 h-4 animate-spin" />
-            <span>Generare Slide {activePageIndex + 1}...</span>
+            <Loader2 className="w-3.5 h-3.5 animate-spin" />
+            <span>Generare...</span>
           </>
         ) : (
           <>
-            <Download className="w-4 h-4" />
-            <span>Descarcă Slide {activePageIndex + 1} ({selectedFormat.toUpperCase()})</span>
+            <Download className="w-3.5 h-3.5" />
+            <span>Descarcă Slide {activePageIndex + 1}</span>
           </>
         )}
       </button>

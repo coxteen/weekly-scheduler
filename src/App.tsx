@@ -162,42 +162,51 @@ export default function App() {
   };
 
   const paginationControls = (
-    <div className="flex flex-col gap-2 h-full justify-between">
-      <div className="flex bg-[#12121c] p-1 rounded-xl border border-[#26263A]">
-        {([2, 3] as SlideCount[]).map((count) => (
-          <button
-            key={count}
-            type="button"
-            onClick={() => {
-              setSlideCount(count);
-              setActivePageIndex(0);
-            }}
-            className={`flex-1 py-1.5 text-xs font-bold transition-all rounded-lg cursor-pointer ${
-              slideCount === count
-                ? 'bg-indigo-600 text-white shadow-xs'
-                : 'text-neutral-400 hover:text-white hover:bg-[#1a1a28]'
-            }`}
-          >
-            {count} Slide-uri
-          </button>
-        ))}
+    <div className="flex flex-col justify-between h-full gap-2.5">
+      {/* Selector mod slide-uri (2 sau 3) */}
+      <div className="grid grid-cols-2 gap-1 bg-[#101018] p-1 rounded-xl border border-[#222234]">
+        {([2, 3] as SlideCount[]).map((count) => {
+          const isSelected = slideCount === count;
+          return (
+            <button
+              key={count}
+              type="button"
+              onClick={() => {
+                setSlideCount(count);
+                setActivePageIndex(0);
+              }}
+              className={`py-2 text-xs font-bold rounded-lg transition-all cursor-pointer text-center ${
+                isSelected
+                  ? 'bg-indigo-600 text-white shadow-xs'
+                  : 'text-neutral-400 hover:text-white hover:bg-[#1a1a28]'
+              }`}
+            >
+              {count} Slide-uri
+            </button>
+          );
+        })}
       </div>
 
-      <div className="flex bg-[#171724] border border-[#262638] rounded-xl p-1 gap-1">
-        {pages.map((p, idx) => (
-          <button
-            key={p.pageNumber}
-            type="button"
-            onClick={() => setActivePageIndex(idx)}
-            className={`flex-1 py-1.5 text-xs font-bold transition-all cursor-pointer rounded-lg ${
-              safePageIndex === idx
-                ? 'bg-neutral-100 text-neutral-950 shadow-sm'
-                : 'text-neutral-400 hover:text-white hover:bg-[#202030]'
-            }`}
-          >
-            Slide {idx + 1}
-          </button>
-        ))}
+      {/* Selector slide curent: doar 1, 2, 3 */}
+      <div className="flex bg-[#101018] border border-[#222234] rounded-xl p-1 gap-1">
+        {pages.map((p, idx) => {
+          const isSelected = safePageIndex === idx;
+          return (
+            <button
+              key={p.pageNumber}
+              type="button"
+              onClick={() => setActivePageIndex(idx)}
+              className={`flex-1 py-2 text-sm font-black transition-all cursor-pointer rounded-lg text-center ${
+                isSelected
+                  ? 'bg-neutral-100 text-neutral-950 shadow-sm scale-[1.02]'
+                  : 'text-neutral-400 hover:text-white hover:bg-[#1a1a28]'
+              }`}
+              title={`Afișează Slide ${p.pageNumber}`}
+            >
+              {p.pageNumber}
+            </button>
+          );
+        })}
       </div>
     </div>
   );

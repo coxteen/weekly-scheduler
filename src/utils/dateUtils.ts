@@ -84,4 +84,4 @@ export function calculateWeekEndDate(startDateStr: string): string {
   } catch {
     return startDateStr;
   }
-}
+} 
