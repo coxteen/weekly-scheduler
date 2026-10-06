@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import type { WeeklyScheduleConfig, ScheduleEvent, ScheduleTheme } from '../types/schedule';
 import {
   generateWeekDaysFromStartDate,
@@ -61,44 +61,72 @@ export function useScheduleManager() {
     }
   }, [schedule]);
 
+  const scheduleRef = useRef(schedule);
+  scheduleRef.current = schedule;
+
   const importFromExcel = async (file: File): Promise<void> => {
-    setImportStatus({ state: 'loading', message: `Se procesează "${file.name}"...` });
+  setImportStatus({ state: 'loading', message: `Se procesează "${file.name}"...` });
 
-    try {
-      const buffer = await file.arrayBuffer();
-      const updatedSchedule = await parseExcelToSchedule(buffer, schedule);
+  try {
+    const buffer = await file.arrayBuffer();
 
-      const totalEvents = updatedSchedule.days.reduce(
-        (sum, day) => sum + day.events.length,
-        0
-      );
+    // 1. Parsăm fișierul folosind starea garantat actuală din ref
+    const currentSchedule = scheduleRef.current;
+    const parsed = await parseExcelToSchedule(buffer, currentSchedule);
 
-      setSchedule(updatedSchedule);
+    // 2. Garantăm ID-uri unice pentru fiecare eveniment
+    const sanitizedDays = parsed.days.map((day) => ({
+      ...day,
+      events: day.events.map((ev, idx) => ({
+        ...ev,
+        id: ev.id && typeof ev.id === 'string' && ev.id.trim() !== ''
+          ? ev.id.trim()
+          : `ev-${day.id}-${idx}-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`,
+      })),
+    }));
 
-      if (totalEvents === 0) {
-        setImportStatus({
-          state: 'error',
-          message: 'Fișierul a fost citit, dar nu s-au identificat evenimente valide.',
-        });
-      } else {
-        setImportStatus({
-          state: 'success',
-          message: `S-au importat și salvat cu succes ${totalEvents} evenimente!`,
-        });
+    const totalEvents = sanitizedDays.reduce((sum, d) => sum + d.events.length, 0);
 
-        setTimeout(() => {
-          setImportStatus((prev) => (prev.state === 'success' ? { state: 'idle', message: '' } : prev));
-        }, 4000);
-      }
-    } catch (error) {
-      console.error('[Excel Import Error]:', error);
-      const errMsg = error instanceof Error ? error.message : 'Eroare la parsare.';
+    if (totalEvents === 0) {
       setImportStatus({
         state: 'error',
-        message: `Eroare la procesare: ${errMsg}`,
+        message: 'Fișierul a fost citit, dar nu conține ateliere detectabile.',
       });
+      return;
     }
-  };
+
+    // 3. Păstrăm tema și setările de dată curente, actualizând doar zilele importate
+    const sanitizedSchedule: WeeklyScheduleConfig = {
+      ...currentSchedule,
+      ...parsed,
+      days: sanitizedDays,
+      // Ne asigurăm că tema și setările selectate de utilizator nu sunt suprascrise eronat
+      theme: currentSchedule.theme,
+      startDate: currentSchedule.startDate,
+      endDate: currentSchedule.endDate,
+      includeYear: currentSchedule.includeYear,
+    };
+
+    // 4. Actualizare atomică
+    setSchedule(sanitizedSchedule);
+
+    setImportStatus({
+      state: 'success',
+      message: `S-au importat și salvat cu succes ${totalEvents} evenimente!`,
+    });
+
+    setTimeout(() => {
+      setImportStatus((prev) => (prev.state === 'success' ? { state: 'idle', message: '' } : prev));
+    }, 3500);
+
+  } catch (error) {
+    console.error('[Excel Import Error]:', error);
+    setImportStatus({
+      state: 'error',
+      message: error instanceof Error ? error.message : 'Eroare la parsarea fișierului.',
+    });
+  }
+};
 
   // Resetare completă la mockSchedule.json
   const resetToDefaultSchedule = () => {
@@ -163,19 +191,19 @@ export function useScheduleManager() {
   };
 
   const updateEvent = (dayId: string, eventId: string, updatedFields: Partial<ScheduleEvent>) => {
-    setSchedule((prev) => ({
-      ...prev,
-      days: prev.days.map((day) => {
-        if (day.id !== dayId) return day;
-        return {
-          ...day,
-          events: day.events.map((ev) =>
-            ev.id === eventId ? { ...ev, ...updatedFields } : ev
-          ),
-        };
-      }),
-    }));
-  };
+  setSchedule((prev) => ({
+    ...prev,
+    days: prev.days.map((day) => {
+      if (day.id !== dayId) return day;
+      return {
+        ...day,
+        events: day.events.map((ev) =>
+          ev.id === eventId ? { ...ev, ...updatedFields } : ev
+        ),
+      };
+    }),
+  }));
+};
 
   const addEvent = (dayId: string) => {
     const newEvent: ScheduleEvent = {
