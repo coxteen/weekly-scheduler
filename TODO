@@ -1,5 +1,26 @@
-- slider for the number of events per image
-- slider for spacing between the days
-- slider for offseting the alligment of the days vertically
-- slider for the title and period
-- 
+Etapa 6: Profile & Preset-uri Personalizate (Preset Manager Local)
+Obiectiv: salvarea, redenumirea, ștergerea și selectarea preset-urilor preferate direct în browser, cu opțiunea de profil implicit (Default).
+
+Modelul de date al profilelor:
+
+Tip de date PosterPreset: { id: string, name: string, settings: Record<number, PosterCustomizableSettings>, isDefault: boolean, updatedAt: string }.
+
+Preset-uri predefinite din fabrică (Built-in Presets):
+
+Cel puțin 2-3 profile gata create (ex. „Compact / Multe evenimente”, „Aerisit / Minimalist”, „Default ZborHub”).
+
+Preset Manager UI în PosterSettingsPanel.tsx:
+
+Dropdown de selecție: comutare instantanee între profilele salvate.
+
+Acțiuni rapide:
+
+„Salvează ca profil nou” (prompt/input pentru denumire).
+
+„Actualizează profilul activ” (suprascrie valorile).
+
+„Setează ca implicit (Default)” (bifează profilul care se va încărca automat de fiecare dată când este deschis site-ul).
+
+„Șterge profil” (cu protecție pentru preset-urile din fabrică).
+
+Export / Import opțional (JSON): un buton simplu de export/import fișier JSON pentru a putea muta profilele pe un alt laptop/dispozitiv fără cont de utilizator.
