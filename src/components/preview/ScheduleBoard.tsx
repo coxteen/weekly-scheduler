@@ -23,15 +23,14 @@ export const ScheduleBoard = forwardRef<HTMLDivElement, ScheduleBoardProps>(
     const { layout, header } = settings;
 
     return (
-      <div className="w-full flex justify-center items-center">
+      <div className="w-full flex justify-center items-center h-[82vh]">
         <div
           ref={ref}
           data-page-number={page.pageNumber}
-          className="w-full shadow-2xl relative flex flex-col overflow-hidden max-h-[82vh] aspect-[9/16]"
+          className="h-full aspect-[9/16] max-w-full shadow-2xl relative flex flex-col overflow-hidden shrink-0 select-none"
           style={{
             backgroundColor: config.theme.backgroundColor,
             color: config.theme.textColor,
-            maxWidth: fixedLayout.maxWidth,
             borderRadius: fixedLayout.borderRadius,
             paddingLeft: `${layout.paddingHorizontal}px`,
             paddingRight: `${layout.paddingHorizontal}px`,

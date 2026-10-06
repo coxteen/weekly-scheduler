@@ -2,7 +2,6 @@ import type { PosterCustomizableSettings } from '../types/posterCustomizer';
 
 export const POSTER_FIXED_CONFIG = {
   layout: {
-    maxWidth: '420px',
     aspectRatio: '9 / 16',
     borderRadius: '30px',
   },
