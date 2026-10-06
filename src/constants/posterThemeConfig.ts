@@ -3,8 +3,7 @@ import type { PosterCustomizableSettings } from '../types/posterCustomizer';
 export const POSTER_FIXED_CONFIG = {
   layout: {
     maxWidth: '420px',
-    aspectRatio: '9 / 19.5',
-    minHeight: '850px',
+    aspectRatio: '9 / 16',
     borderRadius: '30px',
   },
   daySection: {
@@ -16,32 +15,32 @@ export const POSTER_FIXED_CONFIG = {
 
 export const DEFAULT_POSTER_SETTINGS: PosterCustomizableSettings = {
   layout: {
-    paddingHorizontal: 30,
+    paddingHorizontal: 28,
     paddingTop: 0,
-    paddingBottom: 40,
-    daysGap: 20,
+    paddingBottom: 32,
+    daysGap: 16,
   },
   header: {
-    titleFontSize: 20,
+    titleFontSize: 24,
     titleLetterSpacing: 0.16,
-    periodFontSize: 36,
-    periodLetterSpacing: 0.16,
+    periodFontSize: 28,
+    periodLetterSpacing: 0.08,
   },
   daySection: {
     borderRadius: 10,
-    paddingVertical: 8,
+    paddingVertical: 7,
     paddingHorizontal: 12,
-    eventsGap: 8,
-    headerFontSize: 12,
+    eventsGap: 6,
+    headerFontSize: 11,
   },
   eventCard: {
-    emojiSize: 24,
-    gapEmojiToContent: 12,
+    emojiSize: 22,
+    gapEmojiToContent: 10,
     gapTimeToTitle: 0,
-    titleFontSize: 14,
+    titleFontSize: 13,
     titleLineHeight: 14,
-    featureFontSize: 12,
-    slashFontSize: 12,
+    featureFontSize: 11,
+    slashFontSize: 11,
     timeFontSize: 10,
     paddingVertical: 0,
   },

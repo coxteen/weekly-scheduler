@@ -17,23 +17,21 @@ export const ScheduleBoard = forwardRef<HTMLDivElement, ScheduleBoardProps>(
     const periodText = formatPeriodHeader(
       config.startDate, 
       config.endDate,
-    config.includeYear ?? false
-  );
+      config.includeYear ?? false
+    );
     const { layout: fixedLayout } = POSTER_FIXED_CONFIG;
     const { layout, header } = settings;
 
     return (
-      <div className="w-full max-w-[420px] flex justify-center">
+      <div className="w-full flex justify-center items-center">
         <div
           ref={ref}
           data-page-number={page.pageNumber}
-          className="w-full shadow-2xl relative flex flex-col overflow-hidden"
+          className="w-full shadow-2xl relative flex flex-col overflow-hidden max-h-[82vh] aspect-[9/16]"
           style={{
             backgroundColor: config.theme.backgroundColor,
             color: config.theme.textColor,
             maxWidth: fixedLayout.maxWidth,
-            aspectRatio: fixedLayout.aspectRatio,
-            minHeight: fixedLayout.minHeight,
             borderRadius: fixedLayout.borderRadius,
             paddingLeft: `${layout.paddingHorizontal}px`,
             paddingRight: `${layout.paddingHorizontal}px`,
@@ -66,7 +64,7 @@ export const ScheduleBoard = forwardRef<HTMLDivElement, ScheduleBoardProps>(
           </div>
 
           <div 
-            className="w-full flex-none flex flex-col"
+            className="w-full flex-none flex flex-col justify-center"
             style={{ gap: `${layout.daysGap}px` }}
           >
             {page.days.map((day) => (

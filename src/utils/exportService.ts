@@ -9,10 +9,10 @@ const downloadImage = (dataUrl: string, filename: string) => {
 };
 
 const EXPORT_OPTIONS = {
-  pixelRatio: 2,
+  pixelRatio: 2.5,
   style: {
-    borderRadius: '0px', 
-  }
+    borderRadius: '0px',
+  },
 };
 
 export async function exportElementsToPng(elements: HTMLElement[]): Promise<void> {
@@ -35,7 +35,7 @@ export async function exportElementsToJpg(elements: HTMLElement[]): Promise<void
     const dataUrl = await toJpeg(elements[i], { 
       ...EXPORT_OPTIONS, 
       quality: 0.95, 
-      backgroundColor: bgColor
+      backgroundColor: bgColor,
     });
     const filename = elements.length > 1 ? `story-program-${i + 1}.jpg` : 'story-program.jpg';
     downloadImage(dataUrl, filename);

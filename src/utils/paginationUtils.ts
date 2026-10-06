@@ -1,5 +1,7 @@
 import type { DaySchedule } from '../types/schedule';
 
+export type SlideCount = 1 | 2 | 3;
+
 export interface SchedulePage {
   pageNumber: number;
   totalPages: number;
@@ -7,17 +9,32 @@ export interface SchedulePage {
   totalEvents: number;
 }
 
-export function paginateScheduleDays(days: DaySchedule[]): SchedulePage[] {
+export function paginateScheduleDays(
+  days: DaySchedule[],
+  targetSlideCount: SlideCount = 2
+): SchedulePage[] {
   if (days.length === 0) return [];
 
-  const page1Days = days.slice(0, 3);
-  const page2Days = days.slice(3, 7);
+  let chunkedDays: DaySchedule[][] = [];
 
-  const pages = [page1Days, page2Days].filter(p => p.length > 0);
+  switch (targetSlideCount) {
+    case 2:
+      chunkedDays = [days.slice(0, 3), days.slice(3, 7)];
+      break;
 
-  return pages.map((pageDays, idx) => ({
+    case 3:
+      chunkedDays = [days.slice(0, 2), days.slice(2, 4), days.slice(4, 7)];
+      break;
+
+    default:
+      chunkedDays = [days.slice(0, 3), days.slice(3, 7)];
+  }
+
+  const validPages = chunkedDays.filter((slice) => slice.length > 0);
+
+  return validPages.map((pageDays, idx) => ({
     pageNumber: idx + 1,
-    totalPages: pages.length,
+    totalPages: validPages.length,
     days: pageDays,
     totalEvents: pageDays.reduce((acc, d) => acc + d.events.length, 0),
   }));

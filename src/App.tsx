@@ -1,6 +1,6 @@
 import { useRef, useMemo, useState } from 'react';
 import { useScheduleManager } from './hooks/useScheduleManager';
-import { paginateScheduleDays } from './utils/paginationUtils';
+import { paginateScheduleDays, type SlideCount } from './utils/paginationUtils';
 import { ScheduleBoard } from './components/preview/ScheduleBoard';
 import { ScheduleEditor } from './components/editor/ScheduleEditor';
 import { ExportToolbar } from './components/preview/ExportToolbar';
@@ -20,6 +20,7 @@ export default function App() {
     deleteEvent,
   } = useScheduleManager();
 
+  const [slideCount, setSlideCount] = useState<SlideCount>(2);
   const [activePageIndex, setActivePageIndex] = useState(0);
   const [posterSettings, setPosterSettings] =
     useState<PosterCustomizableSettings>(DEFAULT_POSTER_SETTINGS);
@@ -27,26 +28,47 @@ export default function App() {
   const boardRefs = useRef<(HTMLDivElement | null)[]>([]);
 
   const pages = useMemo(
-    () => paginateScheduleDays(schedule.days),
-    [schedule.days]
+    () => paginateScheduleDays(schedule.days, slideCount),
+    [schedule.days, slideCount]
   );
+
   const safePageIndex = activePageIndex >= pages.length ? 0 : activePageIndex;
 
   const getBoardElements = () => {
     return boardRefs.current.filter((el): el is HTMLDivElement => el !== null);
   };
 
-  const paginationControls =
-    pages.length > 1 ? (
-      <div className="flex flex-col bg-[#171724] border border-[#262638] rounded-lg overflow-hidden p-1 shadow-inner h-full">
+  const paginationControls = (
+    <div className="flex flex-col gap-2 h-full justify-between">
+      <div className="flex bg-[#12121c] p-1 rounded-xl border border-[#26263A]">
+        {([2, 3] as SlideCount[]).map((count) => (
+          <button
+            key={count}
+            type="button"
+            onClick={() => {
+              setSlideCount(count);
+              setActivePageIndex(0);
+            }}
+            className={`flex-1 py-1.5 text-xs font-bold transition-all rounded-lg cursor-pointer ${
+              slideCount === count
+                ? 'bg-indigo-600 text-white shadow-xs'
+                : 'text-neutral-400 hover:text-white hover:bg-[#1a1a28]'
+            }`}
+          >
+            {count} Slide-uri
+          </button>
+        ))}
+      </div>
+
+      <div className="flex bg-[#171724] border border-[#262638] rounded-xl p-1 gap-1">
         {pages.map((p, idx) => (
           <button
             key={p.pageNumber}
             type="button"
             onClick={() => setActivePageIndex(idx)}
-            className={`flex-1 flex items-center justify-center py-2 px-2 text-xs font-bold transition-all cursor-pointer rounded-md ${
+            className={`flex-1 py-1.5 text-xs font-bold transition-all cursor-pointer rounded-lg ${
               safePageIndex === idx
-                ? 'bg-indigo-600 text-white shadow-md'
+                ? 'bg-neutral-100 text-neutral-950 shadow-sm'
                 : 'text-neutral-400 hover:text-white hover:bg-[#202030]'
             }`}
           >
@@ -54,7 +76,8 @@ export default function App() {
           </button>
         ))}
       </div>
-    ) : null;
+    </div>
+  );
 
   const exportControls = (
     <ExportToolbar getBoardElements={getBoardElements} />
@@ -81,7 +104,6 @@ export default function App() {
           />
         </section>
 
-        {/* Preview coloana centru */}
         <section className="xl:col-span-4 w-full flex justify-center sticky top-6">
           <div className="w-full flex justify-center">
             {pages[safePageIndex] && (
@@ -123,7 +145,6 @@ export default function App() {
           </div>
         </section>
 
-        {/* Panou setari poster coloana dreapta */}
         <section className="xl:col-span-3 w-full flex justify-center xl:justify-start sticky top-6">
           <PosterSettingsPanel
             settings={posterSettings}
