@@ -15,35 +15,40 @@ const EXPORT_OPTIONS = {
   },
 };
 
-export async function exportElementsToPng(elements: HTMLElement[]): Promise<void> {
-  for (let i = 0; i < elements.length; i++) {
-    const bgColor = window.getComputedStyle(elements[i]).backgroundColor;
-    
-    const dataUrl = await toPng(elements[i], {
-      ...EXPORT_OPTIONS,
-      backgroundColor: bgColor,
-    });
-    const filename = elements.length > 1 ? `story-program-${i + 1}.png` : 'story-program.png';
-    downloadImage(dataUrl, filename);
-  }
+export async function exportSingleElementToPng(
+  element: HTMLElement,
+  slideIndex: number = 0
+): Promise<void> {
+  const bgColor = window.getComputedStyle(element).backgroundColor;
+  const dataUrl = await toPng(element, {
+    ...EXPORT_OPTIONS,
+    backgroundColor: bgColor,
+  });
+  downloadImage(dataUrl, `story-program-slide-${slideIndex + 1}.png`);
 }
 
-export async function exportElementsToJpg(elements: HTMLElement[]): Promise<void> {
-  for (let i = 0; i < elements.length; i++) {
-    const bgColor = window.getComputedStyle(elements[i]).backgroundColor;
-
-    const dataUrl = await toJpeg(elements[i], { 
-      ...EXPORT_OPTIONS, 
-      quality: 0.95, 
-      backgroundColor: bgColor,
-    });
-    const filename = elements.length > 1 ? `story-program-${i + 1}.jpg` : 'story-program.jpg';
-    downloadImage(dataUrl, filename);
-  }
+export async function exportSingleElementToJpg(
+  element: HTMLElement,
+  slideIndex: number = 0
+): Promise<void> {
+  const bgColor = window.getComputedStyle(element).backgroundColor;
+  const dataUrl = await toJpeg(element, {
+    ...EXPORT_OPTIONS,
+    quality: 0.95,
+    backgroundColor: bgColor,
+  });
+  downloadImage(dataUrl, `story-program-slide-${slideIndex + 1}.jpg`);
 }
 
-export async function exportElementsToPdf(elements: HTMLElement[]): Promise<void> {
-  if (elements.length === 0) return;
+export async function exportSingleElementToPdf(
+  element: HTMLElement,
+  slideIndex: number = 0
+): Promise<void> {
+  const bgColor = window.getComputedStyle(element).backgroundColor;
+  const dataUrl = await toPng(element, {
+    ...EXPORT_OPTIONS,
+    backgroundColor: bgColor,
+  });
 
   const pdf = new jsPDF({
     orientation: 'portrait',
@@ -51,19 +56,6 @@ export async function exportElementsToPdf(elements: HTMLElement[]): Promise<void
     format: [1080, 1920],
   });
 
-  for (let i = 0; i < elements.length; i++) {
-    const bgColor = window.getComputedStyle(elements[i]).backgroundColor;
-    
-    const dataUrl = await toPng(elements[i], {
-      ...EXPORT_OPTIONS,
-      backgroundColor: bgColor,
-    });
-
-    if (i > 0) {
-      pdf.addPage([1080, 1920], 'portrait');
-    }
-    pdf.addImage(dataUrl, 'PNG', 0, 0, 1080, 1920);
-  }
-
-  pdf.save('program-saptamanal.pdf');
+  pdf.addImage(dataUrl, 'PNG', 0, 0, 1080, 1920);
+  pdf.save(`story-program-slide-${slideIndex + 1}.pdf`);
 }

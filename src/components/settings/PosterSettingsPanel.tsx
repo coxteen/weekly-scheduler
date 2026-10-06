@@ -1,7 +1,7 @@
-import type { ChangeEvent } from 'react';
+import { useState, type ChangeEvent } from 'react';
 import type { PosterCustomizableSettings } from '../../types/posterCustomizer';
 import { UI_THEME } from '../../constants/uiThemeConfig';
-import { Sliders, RotateCcw } from 'lucide-react';
+import { Sliders, RotateCcw, Copy, Check } from 'lucide-react';
 import { DEFAULT_POSTER_SETTINGS } from '../../constants/posterThemeConfig';
 
 interface NumericControlProps {
@@ -74,12 +74,20 @@ const NumericControl = ({
 interface PosterSettingsPanelProps {
   settings: PosterCustomizableSettings;
   onChange: (newSettings: PosterCustomizableSettings) => void;
+  activePageIndex: number;
+  totalPages: number;
+  onCopySettingsToSlide: (targetSlideIndex: number) => void;
 }
 
 export const PosterSettingsPanel = ({
   settings,
   onChange,
+  activePageIndex,
+  totalPages,
+  onCopySettingsToSlide,
 }: PosterSettingsPanelProps) => {
+  const [copiedTo, setCopiedTo] = useState<number | null>(null);
+
   const updateField = <
     Section extends keyof PosterCustomizableSettings,
     Field extends keyof PosterCustomizableSettings[Section]
@@ -101,28 +109,74 @@ export const PosterSettingsPanel = ({
     onChange(DEFAULT_POSTER_SETTINGS);
   };
 
+  const handleCopy = (targetIndex: number) => {
+    onCopySettingsToSlide(targetIndex);
+    setCopiedTo(targetIndex);
+    setTimeout(() => setCopiedTo(null), 1800);
+  };
+
+  // Ceilalți indici de slide pe care se poate copia
+  const otherSlideIndices = Array.from({ length: totalPages }, (_, i) => i).filter(
+    (i) => i !== activePageIndex
+  );
+
   return (
     <div
       className={`w-full max-w-[340px] ${UI_THEME.backgrounds.panel} ${UI_THEME.borders.subtle} ${UI_THEME.radii.card} ${UI_THEME.spacing.cardPadding} shadow-xl flex flex-col gap-4 max-h-[85vh] overflow-y-auto`}
     >
-      <div className="flex items-center justify-between border-b border-[#262638] pb-3">
-        <div className="flex items-center gap-2">
-          <Sliders className="w-4 h-4 text-indigo-400" />
-          <h2 className="text-sm font-bold text-white tracking-wide">
-            Ajustare Poster
-          </h2>
+      <div className="flex flex-col gap-2 border-b border-[#262638] pb-3">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-2">
+            <Sliders className="w-4 h-4 text-indigo-400" />
+            <h2 className="text-sm font-bold text-white tracking-wide">
+              Ajustare Slide {activePageIndex + 1}
+            </h2>
+          </div>
+          <button
+            type="button"
+            onClick={handleReset}
+            title="Resetează slide-ul curent la valorile implicite"
+            className="p-1.5 rounded-lg text-neutral-400 hover:text-white hover:bg-[#202030] transition-colors cursor-pointer"
+          >
+            <RotateCcw className="w-3.5 h-3.5" />
+          </button>
         </div>
-        <button
-          type="button"
-          onClick={handleReset}
-          title="Resetează la valorile implicite"
-          className="p-1.5 rounded-lg text-neutral-400 hover:text-white hover:bg-[#202030] transition-colors cursor-pointer"
-        >
-          <RotateCcw className="w-3.5 h-3.5" />
-        </button>
+
+        {/* Butoane copiere setări către alte slide-uri */}
+        {otherSlideIndices.length > 0 && (
+          <div className="flex flex-wrap gap-1.5 pt-1">
+            {otherSlideIndices.map((targetIdx) => {
+              const isJustCopied = copiedTo === targetIdx;
+              return (
+                <button
+                  key={targetIdx}
+                  type="button"
+                  onClick={() => handleCopy(targetIdx)}
+                  className={`flex items-center gap-1.5 px-2.5 py-1 rounded-md text-[11px] font-semibold border transition-all cursor-pointer ${
+                    isJustCopied
+                      ? 'bg-emerald-500/20 border-emerald-500/40 text-emerald-300'
+                      : 'bg-[#181826] border-[#2c2c42] text-neutral-300 hover:border-indigo-500 hover:text-white'
+                  }`}
+                >
+                  {isJustCopied ? (
+                    <>
+                      <Check className="w-3 h-3 text-emerald-400" />
+                      <span>Copiat pe Slide {targetIdx + 1}!</span>
+                    </>
+                  ) : (
+                    <>
+                      <Copy className="w-3 h-3 text-indigo-400" />
+                      <span>Copiază pe Slide {targetIdx + 1}</span>
+                    </>
+                  )}
+                </button>
+              );
+            })}
+          </div>
+        )}
       </div>
 
-      {/* 1. LAYOUT GLOBAL */}
+      {/* 1. LAYOUT GENERAL */}
       <div className="flex flex-col gap-2">
         <span className="text-[11px] font-bold text-indigo-300 uppercase tracking-wider">
           1. Layout General

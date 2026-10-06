@@ -1,12 +1,17 @@
 import { useState } from 'react';
-import { exportElementsToPng, exportElementsToJpg, exportElementsToPdf } from '../../utils/exportService';
+import {
+  exportSingleElementToPng,
+  exportSingleElementToJpg,
+  exportSingleElementToPdf,
+} from '../../utils/exportService';
 import { UI_THEME } from '../../constants/uiThemeConfig';
 import { Download, FileImage, Image as ImageIcon, FileText, Loader2 } from 'lucide-react';
 
 type ExportFormat = 'png' | 'jpg' | 'pdf';
 
 interface ExportToolbarProps {
-  getBoardElements: () => HTMLElement[];
+  getActiveBoardElement: () => HTMLElement | null;
+  activePageIndex: number;
 }
 
 const FORMATS = [
@@ -16,39 +21,42 @@ const FORMATS = [
 ] as const;
 
 export const ExportToolbar = ({
-  getBoardElements,
+  getActiveBoardElement,
+  activePageIndex,
 }: ExportToolbarProps) => {
   const [selectedFormat, setSelectedFormat] = useState<ExportFormat>('png');
   const [isExporting, setIsExporting] = useState(false);
 
   const handleExecuteExport = async () => {
-    const elements = getBoardElements();
-    if (elements.length === 0 || isExporting) return;
+    const element = getActiveBoardElement();
+    if (!element || isExporting) return;
 
     setIsExporting(true);
 
     try {
       switch (selectedFormat) {
         case 'png':
-          await exportElementsToPng(elements);
+          await exportSingleElementToPng(element, activePageIndex);
           break;
         case 'jpg':
-          await exportElementsToJpg(elements);
+          await exportSingleElementToJpg(element, activePageIndex);
           break;
         case 'pdf':
-          await exportElementsToPdf(elements);
+          await exportSingleElementToPdf(element, activePageIndex);
           break;
       }
     } catch (error) {
       console.error(error);
-      alert('A apărut o problemă la generarea fișierelor.');
+      alert('A apărut o problemă la descărcarea slide-ului.');
     } finally {
       setIsExporting(false);
     }
   };
 
   return (
-    <div className={`w-full ${UI_THEME.backgrounds.panel} ${UI_THEME.borders.subtle} ${UI_THEME.radii.card} ${UI_THEME.spacing.cardPadding} shadow-xl flex flex-col gap-3.5`}>
+    <div
+      className={`w-full ${UI_THEME.backgrounds.panel} ${UI_THEME.borders.subtle} ${UI_THEME.radii.card} ${UI_THEME.spacing.cardPadding} shadow-xl flex flex-col gap-3.5`}
+    >
       <div className="flex flex-col gap-1.5">
         <div className="grid grid-cols-3 gap-1.5 bg-[#171724] p-1 rounded-xl border border-[#262638]">
           {FORMATS.map(({ id, label, Icon }) => (
@@ -78,12 +86,12 @@ export const ExportToolbar = ({
         {isExporting ? (
           <>
             <Loader2 className="w-4 h-4 animate-spin" />
-            <span>Generare {selectedFormat.toUpperCase()}...</span>
+            <span>Generare Slide {activePageIndex + 1}...</span>
           </>
         ) : (
           <>
             <Download className="w-4 h-4" />
-            <span>Descarcă {selectedFormat.toUpperCase()}</span>
+            <span>Descarcă Slide {activePageIndex + 1} ({selectedFormat.toUpperCase()})</span>
           </>
         )}
       </button>

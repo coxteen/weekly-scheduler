@@ -22,8 +22,15 @@ export default function App() {
 
   const [slideCount, setSlideCount] = useState<SlideCount>(2);
   const [activePageIndex, setActivePageIndex] = useState(0);
-  const [posterSettings, setPosterSettings] =
-    useState<PosterCustomizableSettings>(DEFAULT_POSTER_SETTINGS);
+
+  // Stocare setări independente per index de slide
+  const [slidesSettings, setSlidesSettings] = useState<
+    Record<number, PosterCustomizableSettings>
+  >({
+    0: { ...DEFAULT_POSTER_SETTINGS },
+    1: { ...DEFAULT_POSTER_SETTINGS },
+    2: { ...DEFAULT_POSTER_SETTINGS },
+  });
 
   const boardRefs = useRef<(HTMLDivElement | null)[]>([]);
 
@@ -34,8 +41,28 @@ export default function App() {
 
   const safePageIndex = activePageIndex >= pages.length ? 0 : activePageIndex;
 
-  const getBoardElements = () => {
-    return boardRefs.current.filter((el): el is HTMLDivElement => el !== null);
+  // Setările slide-ului activ curent
+  const currentSlideSettings =
+    slidesSettings[safePageIndex] || DEFAULT_POSTER_SETTINGS;
+
+  const handleUpdateCurrentSlideSettings = (
+    newSettings: PosterCustomizableSettings
+  ) => {
+    setSlidesSettings((prev) => ({
+      ...prev,
+      [safePageIndex]: newSettings,
+    }));
+  };
+
+  const handleCopySettingsToSlide = (targetSlideIndex: number) => {
+    setSlidesSettings((prev) => ({
+      ...prev,
+      [targetSlideIndex]: JSON.parse(JSON.stringify(currentSlideSettings)),
+    }));
+  };
+
+  const getActiveBoardElement = () => {
+    return boardRefs.current[safePageIndex] || null;
   };
 
   const paginationControls = (
@@ -80,7 +107,10 @@ export default function App() {
   );
 
   const exportControls = (
-    <ExportToolbar getBoardElements={getBoardElements} />
+    <ExportToolbar
+      getActiveBoardElement={getActiveBoardElement}
+      activePageIndex={safePageIndex}
+    />
   );
 
   return (
@@ -88,6 +118,7 @@ export default function App() {
       className={`min-h-screen ${UI_THEME.backgrounds.app} ${UI_THEME.text.primary} p-4 md:p-6 lg:p-8 flex justify-center`}
     >
       <main className="w-full max-w-[1750px] grid grid-cols-1 xl:grid-cols-12 gap-6 xl:gap-8 items-start">
+        {/* Editor coloana stanga */}
         <section
           className={`xl:col-span-5 w-full ${UI_THEME.backgrounds.panel} ${UI_THEME.borders.subtle} ${UI_THEME.radii.panel} ${UI_THEME.spacing.panelPadding} shadow-2xl`}
         >
@@ -104,6 +135,7 @@ export default function App() {
           />
         </section>
 
+        {/* Preview coloana centru */}
         <section className="xl:col-span-4 w-full flex justify-center sticky top-6">
           <div className="w-full flex justify-center">
             {pages[safePageIndex] && (
@@ -113,42 +145,20 @@ export default function App() {
                 }}
                 config={schedule}
                 page={pages[safePageIndex]}
-                settings={posterSettings}
+                settings={currentSlideSettings}
               />
             )}
           </div>
-
-          <div
-            style={{
-              position: 'absolute',
-              left: '-9999px',
-              top: '0',
-              pointerEvents: 'none',
-              zIndex: -999,
-            }}
-            aria-hidden="true"
-          >
-            {pages.map((p, idx) => {
-              if (idx === safePageIndex) return null;
-              return (
-                <ScheduleBoard
-                  key={p.pageNumber}
-                  ref={(el) => {
-                    boardRefs.current[idx] = el;
-                  }}
-                  config={schedule}
-                  page={p}
-                  settings={posterSettings}
-                />
-              );
-            })}
-          </div>
         </section>
 
+        {/* Panou setari poster coloana dreapta */}
         <section className="xl:col-span-3 w-full flex justify-center xl:justify-start sticky top-6">
           <PosterSettingsPanel
-            settings={posterSettings}
-            onChange={setPosterSettings}
+            settings={currentSlideSettings}
+            onChange={handleUpdateCurrentSlideSettings}
+            activePageIndex={safePageIndex}
+            totalPages={pages.length}
+            onCopySettingsToSlide={handleCopySettingsToSlide}
           />
         </section>
       </main>
