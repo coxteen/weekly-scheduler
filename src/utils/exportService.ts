@@ -1,6 +1,9 @@
 import { toPng, toJpeg } from 'html-to-image';
 import jsPDF from 'jspdf';
 
+const VIRTUAL_WIDTH = 1080;
+const VIRTUAL_HEIGHT = 1920;
+
 const downloadImage = (dataUrl: string, filename: string) => {
   const link = document.createElement('a');
   link.download = filename;
@@ -8,22 +11,34 @@ const downloadImage = (dataUrl: string, filename: string) => {
   link.click();
 };
 
-const EXPORT_OPTIONS = {
-  pixelRatio: 2.5,
-  style: {
-    borderRadius: '0px',
-  },
+const getExportOptions = (element: HTMLElement) => {
+  const computedBg = window.getComputedStyle(element).backgroundColor;
+  const bgColor = computedBg && computedBg !== 'rgba(0, 0, 0, 0)' && computedBg !== 'transparent'
+    ? computedBg
+    : '#12121c';
+
+  return {
+    width: VIRTUAL_WIDTH,
+    height: VIRTUAL_HEIGHT,
+    canvasWidth: VIRTUAL_WIDTH,
+    canvasHeight: VIRTUAL_HEIGHT,
+    pixelRatio: 1,
+    backgroundColor: bgColor,
+    style: {
+      transform: 'none',
+      transformOrigin: 'top left',
+      borderRadius: '0px',
+      margin: '0px',
+    },
+  };
 };
 
 export async function exportSingleElementToPng(
   element: HTMLElement,
   slideIndex: number = 0
 ): Promise<void> {
-  const bgColor = window.getComputedStyle(element).backgroundColor;
-  const dataUrl = await toPng(element, {
-    ...EXPORT_OPTIONS,
-    backgroundColor: bgColor,
-  });
+  const options = getExportOptions(element);
+  const dataUrl = await toPng(element, options);
   downloadImage(dataUrl, `story-program-slide-${slideIndex + 1}.png`);
 }
 
@@ -31,11 +46,10 @@ export async function exportSingleElementToJpg(
   element: HTMLElement,
   slideIndex: number = 0
 ): Promise<void> {
-  const bgColor = window.getComputedStyle(element).backgroundColor;
+  const options = getExportOptions(element);
   const dataUrl = await toJpeg(element, {
-    ...EXPORT_OPTIONS,
+    ...options,
     quality: 0.95,
-    backgroundColor: bgColor,
   });
   downloadImage(dataUrl, `story-program-slide-${slideIndex + 1}.jpg`);
 }
@@ -44,18 +58,15 @@ export async function exportSingleElementToPdf(
   element: HTMLElement,
   slideIndex: number = 0
 ): Promise<void> {
-  const bgColor = window.getComputedStyle(element).backgroundColor;
-  const dataUrl = await toPng(element, {
-    ...EXPORT_OPTIONS,
-    backgroundColor: bgColor,
-  });
+  const options = getExportOptions(element);
+  const dataUrl = await toPng(element, options);
 
   const pdf = new jsPDF({
     orientation: 'portrait',
     unit: 'px',
-    format: [1080, 1920],
+    format: [VIRTUAL_WIDTH, VIRTUAL_HEIGHT],
   });
 
-  pdf.addImage(dataUrl, 'PNG', 0, 0, 1080, 1920);
+  pdf.addImage(dataUrl, 'PNG', 0, 0, VIRTUAL_WIDTH, VIRTUAL_HEIGHT);
   pdf.save(`story-program-slide-${slideIndex + 1}.pdf`);
 }

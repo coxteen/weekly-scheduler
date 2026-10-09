@@ -2,7 +2,7 @@
 
 # ZborHub Weekly Scheduler
 
-**A browser-based weekly planner and poster builder for training programs, workshops, recurring events, and team schedules.**
+**A browser-based weekly planner and poster builder for training programs, workshops, recurring events, and team schedules**
 
 [![Platform](https://img.shields.io/badge/Platform-Web-4F46E5?style=flat-square&logo=vercel&logoColor=white)](https://vite.dev/)
 [![Framework](https://img.shields.io/badge/React-19-61DAFB?style=flat-square&logo=react&logoColor=white)](https://react.dev/)
@@ -158,4 +158,4 @@ This project is intentionally frontend-only and does not require a backend or ex
 ## License & author
 
 - Author: [Costin Ghiujan](https://github.com/coxteen)
-- License: [MIT](LICENSE)
+- License: Released unde the [MIT License](LICENSE).

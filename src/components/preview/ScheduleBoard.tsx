@@ -62,81 +62,83 @@ export const ScheduleBoard = forwardRef<HTMLDivElement, ScheduleBoardProps>(
     }, []);
 
     return (
-      // 1. Container exterior: umple complet înălțimea și lățimea coloanei din App.tsx
       <div
         ref={containerRef}
         className="w-full h-full min-h-[60vh] xl:min-h-0 flex-1 flex items-center justify-center overflow-hidden relative p-0"
       >
-        {/* 2. Wrapper dimensionat dinamic la pixelul exact al posterului scalat */}
         <div
           style={{
             width: `${VIRTUAL_WIDTH * scale}px`,
             height: `${VIRTUAL_HEIGHT * scale}px`,
           }}
-          className="relative shrink-0 shadow-2xl flex items-center justify-center transition-all duration-75"
+          className="relative shrink-0 shadow-2xl flex items-center justify-center"
         >
-          {/* 3. Canvasul intern fix 1080x1920: scalează unitar din stânga-sus */}
           <div
-            ref={ref}
-            data-page-number={page.pageNumber}
-            className="flex flex-col overflow-hidden select-none absolute left-0 top-0"
             style={{
               width: `${VIRTUAL_WIDTH}px`,
               height: `${VIRTUAL_HEIGHT}px`,
               transform: `scale(${scale})`,
               transformOrigin: 'top left',
-              backgroundColor: config.theme.backgroundColor,
-              color: config.theme.textColor,
-              borderRadius: fixedLayout.borderRadius,
-              paddingLeft: `${layout.paddingHorizontal}px`,
-              paddingRight: `${layout.paddingHorizontal}px`,
-              paddingTop: `${layout.paddingTop}px`,
-              paddingBottom: `${layout.paddingBottom}px`,
             }}
+            className="absolute left-0 top-0 pointer-events-auto"
           >
-            {/* Header */}
             <div
-              className="flex flex-col items-center justify-center w-full"
-              style={{ flexGrow: 2 }}
+              ref={ref}
+              data-page-number={page.pageNumber}
+              className="w-full h-full flex flex-col overflow-hidden select-none"
+              style={{
+                width: `${VIRTUAL_WIDTH}px`,
+                height: `${VIRTUAL_HEIGHT}px`,
+                backgroundColor: config.theme.backgroundColor,
+                color: config.theme.textColor,
+                borderRadius: fixedLayout.borderRadius,
+                paddingLeft: `${layout.paddingHorizontal}px`,
+                paddingRight: `${layout.paddingHorizontal}px`,
+                paddingTop: `${layout.paddingTop}px`,
+                paddingBottom: `${layout.paddingBottom}px`,
+              }}
             >
               <div
-                className="font-black text-white"
-                style={{
-                  fontSize: `${header.titleFontSize}px`,
-                  letterSpacing: `${header.titleLetterSpacing}em`,
-                }}
+                className="flex flex-col items-center justify-center w-full"
+                style={{ flexGrow: 2 }}
               >
-                PROGRAM
+                <div
+                  className="font-black text-white"
+                  style={{
+                    fontSize: `${header.titleFontSize}px`,
+                    letterSpacing: `${header.titleLetterSpacing}em`,
+                  }}
+                >
+                  PROGRAM
+                </div>
+                <div
+                  className="font-bold text-white uppercase leading-none mt-2"
+                  style={{
+                    fontSize: `${header.periodFontSize}px`,
+                    letterSpacing: `${header.periodLetterSpacing}em`,
+                  }}
+                >
+                  {periodText}
+                </div>
               </div>
+
               <div
-                className="font-bold text-white uppercase leading-none mt-2"
-                style={{
-                  fontSize: `${header.periodFontSize}px`,
-                  letterSpacing: `${header.periodLetterSpacing}em`,
-                }}
+                className="w-full flex-none flex flex-col justify-center"
+                style={{ gap: `${layout.daysGap}px` }}
               >
-                {periodText}
+                {page.days.map((day) => (
+                  <DaySection
+                    key={day.id}
+                    day={day}
+                    settings={settings}
+                    textColor={config.theme.textColor}
+                    accentColor={config.theme.accentColor}
+                  />
+                ))}
               </div>
-            </div>
 
-            {/* Zile */}
-            <div
-              className="w-full flex-none flex flex-col justify-center"
-              style={{ gap: `${layout.daysGap}px` }}
-            >
-              {page.days.map((day) => (
-                <DaySection
-                  key={day.id}
-                  day={day}
-                  settings={settings}
-                  textColor={config.theme.textColor}
-                  accentColor={config.theme.accentColor}
-                />
-              ))}
+              <div className="w-full" style={{ flexGrow: 1 }} aria-hidden="true" />
             </div>
-
-            {/* Spacer inferior */}
-            <div className="w-full" style={{ flexGrow: 1 }} aria-hidden="true" />
           </div>
         </div>
       </div>
